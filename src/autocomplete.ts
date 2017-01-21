@@ -2,8 +2,13 @@ let LOCAL_STORAGE: Storage;
 
 class AutoComplete {
 
-    constructor() {
+    private rootElement: HTMLElement;
+
+    constructor(elementId: string) {
         console.log(`constructor AutoComplete`);
+        console.log(`elementId: ${elementId}`);
+        this.rootElement = document.getElementById(elementId);
+        console.log(this.rootElement);
     }
 
     async query(url: string, cacheData: boolean = true, cacheBust: boolean = false): Promise<AutoCompleteHttpResponse> {
@@ -108,8 +113,6 @@ function isCacheAvailable(): boolean {
 
 
 interface AutoCompleteOptions {
-    // url: string;
-    prefetch: boolean;
     cache: boolean;
     bustCache: boolean;
 }

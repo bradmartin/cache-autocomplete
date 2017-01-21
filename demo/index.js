@@ -1,8 +1,9 @@
 document.addEventListener("readystatechange", () => {
     if (document.readyState === "complete") {
-        var autoComplete = new AutoComplete();
+
+        var autoComplete = new AutoComplete("autoThis");
         console.log(performance.now());
-        autoComplete.query('https://api.nastek.com/api/shipper/typeahead?name=al&apikey=1', true, false).then(function (resp) {
+        autoComplete.query('https://api.nastek.com/api/shipper/typeahead?name=al&apikey=1', true, false).then((resp) => {
             console.log(performance.now());
 
             let data = JSON.parse(resp.data);
@@ -21,6 +22,8 @@ document.addEventListener("readystatechange", () => {
 
             console.log(performance.now());
 
+        }, (err) => {
+            console.warn(err)
         })
     }
 })
