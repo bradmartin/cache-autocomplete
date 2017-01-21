@@ -2,7 +2,7 @@ document.addEventListener("readystatechange", () => {
     if (document.readyState === "complete") {
 
         var autoComplete = new AutoComplete("autoThis");
-        console.log(performance.now());
+        console.log(performance.now()); 
 
         autoComplete.query('https://someApi.com/api/whatever', true, false).then((resp) => {
             console.log(performance.now());
