@@ -1,0 +1,17 @@
+*.gif
+*.gif
+*.png
+*.md
+*.gitignore
+*.gitattributes
+demo/
+screens/
+app/
+.vscode/
+*.png
+*.log
+*.ts
+*.js.map
+*.md
+!index.d.ts
+tsconfig.json
