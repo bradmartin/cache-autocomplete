@@ -1,45 +1,106 @@
-let LOCAL_STORAGE: Storage;
-
 class AutoComplete {
 
-    private rootElement: HTMLElement;
+    public SELECT: HTMLSelectElement;
+    private ROOT_ELEMENT: HTMLElement;
+    private SUGGESTIONS;
+    private CACHE_DATA;
 
-    constructor(elementId: string) {
-        console.log(`constructor AutoComplete`);
-        console.log(`elementId: ${elementId}`);
-        this.rootElement = document.getElementById(elementId);
-        console.log(this.rootElement);
+    constructor(elementId: string, cacheData: boolean) {
+        console.log(`start constructor: ${performance.now()}`);
+        this.ROOT_ELEMENT = document.getElementById(elementId);
+        this.CACHE_DATA = cacheData;
+        console.log(`end constructor: ${performance.now()}`);
     }
 
-    async query(url: string, cacheData: boolean = true, cacheBust: boolean = false): Promise<AutoCompleteHttpResponse> {
-        let result: AutoCompleteHttpResponse; /// data to return
-        let isUrlCached: boolean = false;
+    public query(url: string, bustCache: boolean = false): Promise<any> {
+        return new Promise((resolve, reject) => {
+            let isUrlCached: boolean = false;
 
-        /// check if this url has been cached previously
-        for (let key in window.localStorage) {
-            if (key.lastIndexOf("autocomplete", 0) === 0) {
-                isUrlCached = true;
+            console.log(`start key loop: ${performance.now()}`);
+
+            /// check if this url has been cached previously
+            for (let key in window.localStorage) {
+                if (key.lastIndexOf("autocomplete", 0) === 0) {
+                    let keyMatchUrl = key.indexOf(url) > -1;
+                    if (keyMatchUrl === true) {
+                        isUrlCached = true;
+                    }
+                }
+
+                if (isUrlCached === true) { break; }
+
             }
+
+            console.log(`end key loop: ${performance.now()}`);
+
+            /// is the urlCached already and are we busting the cache
+            if (isUrlCached === true && bustCache === true) {
+                httpAsync(url).then((response) => {
+                    if (this.CACHE_DATA === true) {
+                        this.cacheIt(url, response);
+                    }
+                    resolve(response.data);
+                });
+            } else if (isUrlCached === true && bustCache === false) {
+                let cachedData: any = getCachedData(`autocomplete-${url}`);
+                resolve(JSON.parse(cachedData).data);
+            } else if (isUrlCached === false) {
+                httpAsync(url).then((response) => {
+                    if (this.CACHE_DATA === true) {
+                        this.cacheIt(url, response);
+                    }
+                    resolve(response.data);
+                });
+            } else {
+                /// wtf
+                console.log(`WHAT DO WE DO?!?!?`);
+                reject("get outta here");
+            }
+
+        });
+    }
+
+    /**
+     * Set the suggestions for the AutoComplete
+     * @param {Array} dataArray - the array of objects for the list of options.
+     * @param {string} optionText - the text property in the dataArrays objects for the <option>TEXT</option>.
+     * @param {string} optionValue - the <option value="optionValue"></option> for the options in the dataArray.
+     */
+    public setSuggestions(dataArray: any[], optionText: string, optionValue: string) {
+        console.log(`start setSuggestions(): ${performance.now()}`);
+
+        if (!dataArray) {
+            console.log("Suggestions needs an array.");
+            return;
         }
 
-        /// is the urlCached already and are we busting the cache
-        if (isUrlCached === true && cacheBust === true) {
-            result = await httpAsync(url);
-        } else if (isUrlCached === true && cacheBust === false) {
-            result = getCachedData(`autocomplete-${url}`);
-        } else if (isUrlCached === false) {
-            result = await httpAsync(url);
-        } else {
-            /// wtf
-            console.log(`WHAT DO WE DO?!?!?`);
+        this.SELECT = <HTMLSelectElement>document.createElement("select");
+
+        this.SUGGESTIONS = [];
+
+        for (let i = 0; i < dataArray.length; i++) {
+            this.SUGGESTIONS[this.SUGGESTIONS.length] = `<option value=${dataArray[i][optionValue]}>${dataArray[i][optionText]}</option>`;
         }
 
-        if (cacheData === true && isCacheAvailable()) {
+        this.SELECT.innerHTML = this.SUGGESTIONS.join("");
+        this.ROOT_ELEMENT.appendChild(this.SELECT);
+
+        console.log(`end setSuggestions(): ${performance.now()}`);
+
+    }
+
+    /**
+     * Cache the response for the url in the query()
+     * @param {string} url - the query Url for the AutoComplete
+     * @param {AutoCompleteHttpResponse} result - the response from httpAsync();
+     */
+    private cacheIt(url: string, result: AutoCompleteHttpResponse) {
+        if (isCacheAvailable()) {
             saveDataToCache(`autocomplete-${url}`, result);
         }
-
-        return result;
     }
+
+
 
 }
 
@@ -77,9 +138,9 @@ function httpAsync(url: string, method: string = "GET"): Promise<AutoCompleteHtt
 
 
 function saveDataToCache(keyName: string, data: Object): void {
-    if (keyName && data && isCacheAvailable()) {
+    if (keyName && data) {
         try {
-            LOCAL_STORAGE.setItem(keyName, JSON.stringify(data));
+            window.localStorage.setItem(keyName, JSON.stringify(data));
         } catch (error) {
             console.log(error);
         }
@@ -89,7 +150,7 @@ function saveDataToCache(keyName: string, data: Object): void {
 function getCachedData(keyName: string) {
     if (keyName && isCacheAvailable()) {
         try {
-            return JSON.parse(LOCAL_STORAGE.getItem(keyName));
+            return window.localStorage.getItem(keyName);
         } catch (error) {
             console.log(error);
         }
@@ -99,20 +160,12 @@ function getCachedData(keyName: string) {
 function isCacheAvailable(): boolean {
     try {
         if (window.localStorage) {
-            LOCAL_STORAGE = window.localStorage;
             return true;
         }
     } catch (error) {
         console.log(error);
         return false;
     }
-}
-
-
-
-interface AutoCompleteOptions {
-    cache: boolean;
-    bustCache: boolean;
 }
 
 

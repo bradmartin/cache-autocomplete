@@ -1,30 +1,12 @@
 document.addEventListener("readystatechange", () => {
     if (document.readyState === "complete") {
 
-        var autoComplete = new AutoComplete("autoThis");
-        console.log(performance.now());
-
-        autoComplete.query('https://someApi.com/api/whatever', true, false).then((resp) => {
-            console.log(performance.now());
-
-            let data = JSON.parse(resp.data);
-            let optionItems = [];
-            let dataInfo;
-            for (let i = 0; i < data.length - 1; i++) {
-                optionItems[optionItems.length] = `<option value=${data[i].CST_Key}> ${data[i].CST_Name} </option>`;
-            }
-
-            let div = document.getElementById(`autoThis`);
-            let itemSelect = document.createElement("select");
-            itemSelect.style.color = "#333";
-            itemSelect.id = "whatever";
-            itemSelect.innerHTML = optionItems.join("");
-            div.appendChild(itemSelect);
-
-            console.log(performance.now());
-
+        var autoComplete = new AutoComplete("autoThis", false);
+        autoComplete.query('https://api.nastek.com/api/shipper/typeahead?name=al&apikey=84', true).then((resp) => {
+            autoComplete.setSuggestions(JSON.parse(resp), 'CST_Name', 'CST_Key');
         }, (err) => {
             console.warn(err)
         })
+
     }
 })
