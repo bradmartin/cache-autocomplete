@@ -3,7 +3,7 @@
 *.js.map
 *.log
 *.d.ts
-!index.d.ts
+!autocomplete.d.ts
 demo/lib
 demo/*.d.ts
 demo/platforms
