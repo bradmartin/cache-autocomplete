@@ -17,9 +17,7 @@ class AutoComplete {
 
         /// check if this url has been cached previously
         for (let key in window.localStorage) {
-            // if (key.indexOf("autocomplete") === 1) {
             if (key.lastIndexOf("autocomplete", 0) === 0) {
-                /// this url is cached
                 isUrlCached = true;
             }
         }
