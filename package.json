@@ -1,22 +1,23 @@
 {
-    "name": "autocomplete",
-    "version": "1.1.3",
-    "description": "JS plugin for autocomplete.",
+    "name": "cache-autocomplete",
+    "version": "0.1.0",
+    "description": "JS plugin for autocomplete with caching.",
     "main": "autocomplete",
     "typings": "index.d.ts",
     "repository": {
         "type": "git",
-        "url": "https://github.com/bradmartin/autocomplete"
+        "url": "https://github.com/bradmartin/cache-autocomplete"
     },
     "keywords": [
         "TypeScript",
         "bradmartin",
         "autocomplete",
+        "cache",
         "typeahead",
         "suggestions"
     ],
     "author": "Brad Martin <bradwaynemartin@gmail.com> (https://github.com/bradmartin)",
     "license": "Apache-2.0",
-    "bugs": "https://github.com/bradmartin/autocomplete/issues",
-    "homepage": "https://github.com/bradmartin/autocomplete"
+    "bugs": "https://github.com/bradmartin/cache-autocomplete/issues",
+    "homepage": "https://github.com/bradmartin/cache-autocomplete"
 }
