@@ -4,9 +4,7 @@ document.addEventListener("readystatechange", () => {
         var autoComplete = new AutoComplete("autoThis");
         console.log(performance.now());
 
-        var url = "http://gateway.marvel.com/v1/public/comics?limit=100&format=comic&formatType=comic&apikey=" + KEY;
-
-        autoComplete.query('https://api.nastek.com/api/shipper/typeahead?name=al&apikey=1', true, false).then((resp) => {
+        autoComplete.query('https://someApi.com/api/whatever', true, false).then((resp) => {
             console.log(performance.now());
 
             let data = JSON.parse(resp.data);
