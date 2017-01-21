@@ -6,7 +6,7 @@
 
 ```js
 var autoComplete = new AutoComplete("rootElement");
-autoComplete.query('theUrlToQuery', true, false).then((response) => {
+autoComplete.query('https://whatever.com/api/suggestions?value=' + yourValue, true, false).then((response) => {
     /// whatever
 })
 ```

@@ -3,6 +3,9 @@ document.addEventListener("readystatechange", () => {
 
         var autoComplete = new AutoComplete("autoThis");
         console.log(performance.now());
+
+        var url = "http://gateway.marvel.com/v1/public/comics?limit=100&format=comic&formatType=comic&apikey=" + KEY;
+
         autoComplete.query('https://api.nastek.com/api/shipper/typeahead?name=al&apikey=1', true, false).then((resp) => {
             console.log(performance.now());
 
@@ -16,7 +19,7 @@ document.addEventListener("readystatechange", () => {
             let div = document.getElementById(`autoThis`);
             let itemSelect = document.createElement("select");
             itemSelect.style.color = "#333";
-            itemSelect.id = "myDick";
+            itemSelect.id = "whatever";
             itemSelect.innerHTML = optionItems.join("");
             div.appendChild(itemSelect);
 
