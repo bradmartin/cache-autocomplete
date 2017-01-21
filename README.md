@@ -13,7 +13,7 @@ the network requests.
 ### Usage
 
 ```js
-/// create a new instance of the AutoComplete(url: string, cacheData: boolean);
+/// create a new instance of the AutoComplete(elementId: string, cacheData: boolean);
 var autoComplete = new AutoComplete("rootElement", true);
 
 /// call the `.query(url: string, cacheBust: boolean)` method that returns a Promise();
