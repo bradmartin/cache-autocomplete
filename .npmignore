@@ -17,3 +17,6 @@ app/
 tsconfig.json
 src/
 node_modules/
+gulpfile.js
+README.md
+server.js

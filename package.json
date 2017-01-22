@@ -1,6 +1,6 @@
 {
   "name": "cache-autocomplete",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "JS plugin for autocomplete with caching.",
   "main": "autocomplete",
   "typings": "autocomplete.d.ts",
