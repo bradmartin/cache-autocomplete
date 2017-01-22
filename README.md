@@ -1,8 +1,10 @@
+[![npm](https://img.shields.io/npm/v/nativescript-cache-autocomplete.svg)](https://www.npmjs.com/package/nativescript-cache-autocomplete)
+[![npm](https://img.shields.io/npm/dt/nativescript-cache-autocomplete.svg?label=npm%20downloads)](https://www.npmjs.com/package/nativescript-cache-autocomplete)
 # Cache-AutoComplete
 ### Probably not what you're looking for, but it works for me :stuck_out_tongue: :poop:
 
 
-![CacheAutoComplete](cacheAutoComplete.gif)
+![CacheAutoComplete](screens/cacheAutoComplete.gif)
 
 ## Explanation
 I needed a simple auto complete for a web app I was working on.
