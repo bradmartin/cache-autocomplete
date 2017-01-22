@@ -1,6 +1,9 @@
 # Cache-AutoComplete
 ### Probably not what you're looking for, but it works for me :stuck_out_tongue: :poop:
 
+
+![CacheAutoComplete](cacheAutoComplete.gif)
+
 ## Explanation
 I needed a simple auto complete for a web app I was working on.
 After searching around, nothing fit my use case or desire. 
