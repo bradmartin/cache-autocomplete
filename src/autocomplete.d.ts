@@ -7,7 +7,7 @@ declare class CacheAutoComplete {
     private PopupDiv;
     constructor(options: CacheAutoCompleteOptions);
     private get(url, bustCache?);
-    setSuggestions(dataArray: any[], optionText: string, itemClass: string): Error;
+    setSuggestions(dataArray: any[], optionText: string, listCssClass: string, itemClass: string): Error;
     private clearSuggestions();
     private destroyLocationSearchPopup();
     private cacheIt(url, result);

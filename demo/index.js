@@ -6,7 +6,7 @@ document.addEventListener("readystatechange", () => {
         autoComplete = new CacheAutoComplete({
             elementId: "autoThis",
             cacheData: true,
-            remoteUrl: `https://api.demo.com/api/clients/typeahead?name=~QUERY&apikey=1282289`,
+            remoteUrl: `https://api.demo.com/api/client/typeahead?name=~QUERY&apikey=84`,
             wildCard: `~QUERY`,
             listCssClass: 'listClass',
             itemCssClass: 'itemClass',

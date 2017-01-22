@@ -11,7 +11,6 @@ class CacheAutoComplete {
         console.log(`start constructor: ${performance.now()}`);
 
         this.List = <HTMLUListElement>document.createElement("List");
-        this.List.classList.add(options.listCssClass);
 
         this.RootDomElement = <HTMLInputElement>document.getElementById(options.elementId);
         this.CacheData = options.cacheData;
@@ -41,7 +40,7 @@ class CacheAutoComplete {
 
                     let items = [];
 
-                    this.setSuggestions(data, options.listItemValue, options.itemCssClass);
+                    this.setSuggestions(data, options.listItemValue, options.listCssClass, options.itemCssClass);
 
                 }, (err) => {
                     console.log(err);
@@ -127,7 +126,7 @@ class CacheAutoComplete {
      * @param {string} optionText - the text property in the dataArrays objects for the <option>TEXT</option>.
      * @param {string} optionValue - the <option value="optionValue"></option> for the options in the dataArray.
      */
-    public setSuggestions(dataArray: any[], optionText: string, itemClass: string) {
+    public setSuggestions(dataArray: any[], optionText: string, listCssClass: string, itemClass: string) {
         console.log(`start setSuggestions(): ${performance.now()}`);
 
         if (!dataArray) {
@@ -172,6 +171,7 @@ class CacheAutoComplete {
 
             })
 
+            this.List.style.listStyle = "none";
             this.List.appendChild(li);
         }
 
@@ -183,6 +183,7 @@ class CacheAutoComplete {
         this.PopupDiv = document.createElement("div");
         this.PopupDiv.style.maxHeight = "260px";
         this.PopupDiv.style.overflowY = "auto";
+        this.PopupDiv.classList.add(listCssClass)
         // this.PopupDiv.style.maxWidth = `${this.RootDomElement.clientWidth.toString()}px`;
         this.PopupDiv.style.top = top.toString();
         this.PopupDiv.style.left = left.toString();
