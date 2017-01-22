@@ -1,12 +1,17 @@
+var autoComplete;
+
 document.addEventListener("readystatechange", () => {
     if (document.readyState === "complete") {
 
-        var autoComplete = new AutoComplete("autoThis", false);
-        autoComplete.query('https://api.nastek.com/api/shipper/typeahead?name=al&apikey=84', true).then((resp) => {
-            autoComplete.setSuggestions(JSON.parse(resp), 'CST_Name', 'CST_Key');
-        }, (err) => {
-            console.warn(err)
-        })
+        autoComplete = new CacheAutoComplete({
+            elementId: "autoThis",
+            cacheData: true,
+            remoteUrl: `https://api.demo.com/api/clients/typeahead?name=~QUERY&apikey=1282289`,
+            wildCard: `~QUERY`,
+            listCssClass: 'listClass',
+            itemCssClass: 'itemClass',
+            listItemValue: 'CST_Name'
+        });
 
     }
 })

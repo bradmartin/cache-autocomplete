@@ -12,15 +12,47 @@ the network requests.
 
 ### Usage
 
-```js
-/// create a new instance of the AutoComplete(elementId: string, cacheData: boolean);
-var autoComplete = new AutoComplete("rootElement", true);
 
-/// call the `.query(url: string, cacheBust: boolean)` method that returns a Promise();
-autoComplete.query('https://whatever.com/api/suggestions?value=' + yourValue, true, false).then((response) => {
-    /// here is where you pass the data from the query() to `setSuggestions()` which creates the list of items.
-    autoComplete.setSuggestions(JSON.parse(resp), 'CST_Name', 'CST_Key');
-}, (err) => {
-    console.warn(err)
-})
+#### CacheAutoCompleteOptions 
+```ts
+interface CacheAutoCompleteOptions {
+    elementId: string; /// the input element to create autocomplete with
+    cacheData: boolean; /// boolean to set whether to cache the response
+    remoteUrl: string; /// the url to request
+    wildCard: string; /// the wildCard tells the autoComplete where to inject the root element's value into the query
+    listItemValue: any; /// the object property in the response data from the server.
+    listCssClass: string; /// cssClass for the created <ul> element.
+    itemCssClass: string; /// cssClass for the <li> in the <ul> list
+}
+```
+#### HTML
+```html
+<input id="myAutoComplete" type="text" />
+```
+#### CSS
+```css
+.listClass {
+    border-radius: 4;
+    border: 1px solid #444;
+}
+.itemClass {
+    color: #fff;
+    padding: 5px;
+    background-color: #333;
+}
+```
+#### JS
+```js
+var autoCompleteOptions = {
+            elementId: "myAutoComplete",
+            cacheData: true,
+            remoteUrl: `https://api.demo.com/api/clients/typeahead?name=~QUERY`,
+            wildCard: `~QUERY`,
+            listCssClass: 'listClass',
+            itemCssClass: 'itemClass',
+            listItemValue: 'CustomerName'
+        }
+
+var autoComplete = new AutoComplete(autoCompleteOptions);
+
 ```
