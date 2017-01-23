@@ -6,7 +6,7 @@ document.addEventListener("readystatechange", () => {
         var rootInput = document.getElementById("autoThis");
         caComplete = new CAComplete({
             rootElement: rootInput,
-            cacheData: true,
+            cache: true,
             queryUrl: `https://api.test.com/api/customer/typeahead?name=~QUERY&apikey=84`,
             wildCard: `~QUERY`,
             minStringLength: 1,

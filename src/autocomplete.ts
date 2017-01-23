@@ -4,7 +4,7 @@ class CAComplete {
     public popup: HTMLDivElement;
     public list: HTMLUListElement;
     public items: any[] = [];
-    public cacheData: boolean = true;
+    public cache: boolean = true;
     public queryUrl: string;
 
     constructor(options: CACompleteOptions) {
@@ -12,7 +12,7 @@ class CAComplete {
 
         this.rootElement = options.rootElement;
         this.list = <HTMLUListElement>document.createElement("ul");
-        this.cacheData = options.cacheData;
+        this.cache = options.cache;
 
         this.rootElement.addEventListener("keydown", (ev) => {
             /// if TAB press send focus to list
@@ -25,8 +25,6 @@ class CAComplete {
         /// Add keyup event listener to trigger the GET request
         this.rootElement.addEventListener("keyup", (ev: KeyboardEvent) => {
             let trgt = <HTMLInputElement>(ev.target);
-
-            console.log(ev.keyCode);
 
             /// if the input is empty go ahead and close the suggestion list
             if (trgt.value === "") {
@@ -94,10 +92,10 @@ class CAComplete {
             // console.log(`end localStorage loop: ${performance.now()}`);
 
             /// is the urlCached already and are we busting the cache
-            if (isUrlCached === true && bustCache === true) {
+            if (isUrlCached && bustCache) {
 
-                this.httpAsync(url).then((result) => {
-                    if (this.cacheData === true) {
+                this.http(url).then((result) => {
+                    if (this.cache) {
                         this.cacheIt(url, result);
                     }
                     resolve(result);
@@ -105,16 +103,16 @@ class CAComplete {
                     reject(err);
                 })
 
-            } else if (isUrlCached === true && bustCache === false) {
+            } else if (isUrlCached && !bustCache) {
 
                 let cachedData: string = window.localStorage.getItem(`CAC-${url}`);
 
                 resolve(JSON.parse(cachedData));
 
-            } else if (isUrlCached === false) {
+            } else if (!isUrlCached) {
 
-                this.httpAsync(url).then((result) => {
-                    if (this.cacheData === true) {
+                this.http(url).then((result) => {
+                    if (this.cache) {
                         this.cacheIt(url, result);
                     }
                     resolve(result);
@@ -181,15 +179,16 @@ class CAComplete {
             })
 
             this.list.style.listStyle = "none";
-            // this.list.style.padding = "5px";
+            this.list.style.padding = "0";
+            this.list.style.margin = "0";
             this.list.appendChild(li);
         }
 
         /// get coords of the doc.body
         let bodyRect: ClientRect = document.body.getBoundingClientRect();
         let rect: ClientRect = this.rootElement.getBoundingClientRect();
-        let top = rect.top - bodyRect.top + this.rootElement.clientHeight;
-        let left = rect.left;
+        let top: number = rect.top - bodyRect.top + this.rootElement.clientHeight;
+        let left: number = rect.left;
 
         if (!this.popup) {
             this.popup = document.createElement("div");
@@ -212,10 +211,10 @@ class CAComplete {
 
         // add event listener to the <list> list and then parse the element and update the textboxes
         this.list.addEventListener("click", (listClickEvent: Event) => {
-            let listTarget = <HTMLLIElement>listClickEvent.target;
-            if (listTarget && listTarget.nodeName.toLowerCase() === "li") {
+            let trgt = <HTMLLIElement>listClickEvent.target;
+            if (trgt && trgt.nodeName.toLowerCase() === "li") {
                 // get id of the clicked <li> and map to the data array
-                let selectedItem = data[parseInt(listTarget.id, 10)];
+                let selectedItem = data[parseInt(trgt.id, 10)];
                 this.rootElement.value = selectedItem[optionText];
                 this.xItems();
                 this.xPopup();
@@ -232,13 +231,14 @@ class CAComplete {
      */
     private xItems() {
         if (this.list.getElementsByTagName("li").length > 0) {
-            console.log(`start dumpSuggestions(): ${performance.now()}`);
+            console.log(`start xItems(): ${performance.now()}`);
 
             while (this.list.firstChild) {
                 this.list.removeChild(this.list.firstChild);
             }
             this.items = [];
-            console.log(`end dumpSuggestions(): ${performance.now()}`);
+
+            console.log(`end xItems(): ${performance.now()}`);
         }
     }
 
@@ -247,11 +247,11 @@ class CAComplete {
      * Helper function to remove the popup from DOM.
      */
     private xPopup(): void {
-        console.log(`start destroyPopup(): ${performance.now()}`);
+        console.log(`start xPopup(): ${performance.now()}`);
         if (this.popup.parentNode) {
             this.popup.parentNode.removeChild(this.popup);
         }
-        console.log(`end destroyPopup(): ${performance.now()}`);
+        console.log(`end xPopup(): ${performance.now()}`);
     }
 
 
@@ -260,29 +260,27 @@ class CAComplete {
      * @param {string} url - the query Url for the AutoComplete
      * @param {any} result - the response from httpAsync();
      */
-    private cacheIt(url: string, result: any) {
+    private cacheIt(url: string, data: any) {
         if (window.localStorage) {
-            console.log(`start saveDataToCache(): ${performance.now()}`);
-            window.localStorage.setItem(`CAC-${url}`, JSON.stringify(result));
-            console.log(`end saveDataToCache(): ${performance.now()}`);
+            console.log(`start cacheIt(): ${performance.now()}`);
+            window.localStorage.setItem(`CAC-${url}`, JSON.stringify(data));
+            console.log(`end cacheIt(): ${performance.now()}`);
         }
     }
 
+
     /**
-     * Async XMLHttpRequest
+     * XMLHttpRequest
      */
-    private httpAsync(url: string, method: string = "GET"): Promise<any> {
+    private http(url: string, method: string = "GET"): Promise<any> {
         return new Promise((resolve, reject) => {
 
             let xhr: XMLHttpRequest = new XMLHttpRequest();
             xhr.open(method, url, true);
 
             xhr.onload = () => {
-
-                let result: any = xhr.response;
-
                 if (xhr.status >= 200 && xhr.status < 300) {
-                    resolve(result);
+                    resolve(xhr.response);
                 } else {
                     reject(xhr.statusText);
                 }
@@ -296,12 +294,13 @@ class CAComplete {
         });
     }
 
+
 }
 
 
 interface CACompleteOptions {
     rootElement: HTMLInputElement;
-    cacheData: boolean;
+    cache: boolean;
     queryUrl: string;
     wildCard: string;
     minStringLength: number;
