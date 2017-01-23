@@ -51,8 +51,9 @@ interface CacheAutoCompleteOptions {
 ```
 #### JS
 ```js
+var rootInput = document.getElementById("autoThis");
 var autoCompleteOptions = {
-           rootElement: "autoThis",
+           rootElement: rootInput,
             cacheData: true,
             queryUrl: `https://api.test.com/api/clients/typeahead?name=~QUERY&apikey=84`,
             wildCard: `~QUERY`,
