@@ -5,6 +5,8 @@ declare class CAComplete {
     items: any[];
     cache: boolean;
     queryUrl: string;
+    onItemSelect: Function;
+    onItemsSet: Function;
     constructor(options: CACompleteOptions);
     private get(url, bustCache?);
     private setItems(data, optionText, listClass, itemClass);
@@ -22,4 +24,6 @@ interface CACompleteOptions {
     itemValue: any;
     listClass: string;
     itemClass: string;
+    onItemSelect: Function;
+    onItemsSet: Function;
 }

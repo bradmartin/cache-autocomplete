@@ -12,7 +12,13 @@ document.addEventListener("readystatechange", () => {
             minStringLength: 1,
             listClass: 'listClass',
             itemClass: 'itemClass',
-            itemValue: 'CST_Name'
+            itemValue: 'CST_Name',
+            onItemSelect: function (selectedItem) {
+                console.log(selectedItem);
+            },
+            onItemsSet: function() {
+                console.log('on items set');
+            }
         });
 
     }

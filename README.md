@@ -3,8 +3,8 @@
 # Cache-AutoComplete
 ### Probably not what you're looking for, but it works for me :stuck_out_tongue: :poop:
 
-### Minified = 3.44kb 
-### .min gzipped = 1.31kb
+### Minified = 3.87kb 
+### .min gzipped = 1.39kb
 
 ![CacheAutoComplete](screens/cacheAutoComplete.gif)
 
@@ -23,14 +23,16 @@ the network requests.
 #### CacheAutoCompleteOptions 
 ```ts
 interface CACompleteOptions {
-    rootElement: string; /// the input element to create autocomplete with
-    cacheData: boolean; /// boolean to set whether to cache the response
-    queryUrl: string; /// the url to request
-    wildCard: string; /// the wildCard tells the autoComplete where to inject the root element's value into the query
-    minStringLength: number; /// minimum string value before queries are sent for autocompletion.
-    itemValue: any; /// the object property in the response data from the server.
-    listClass: string; /// cssClass for the created <ul> element.
-    itemClass: string; /// cssClass for the <li> in the <ul> list
+    rootElement: HTMLInputElement;
+    cache: boolean;
+    queryUrl: string;
+    wildCard: string;
+    minStringLength: number;
+    itemValue: any;
+    listClass: string;
+    itemClass: string;
+    onItemSelect: Function;
+    onItemsSet: Function;
 }
 ```
 #### HTML
@@ -70,16 +72,22 @@ interface CACompleteOptions {
 ```
 #### JS
 ```js
-var rootInput = document.getElementById("autoThis");
+var rootInput = document.getElementById("myAutoComplete");
 var CACompleteOptions = {
-           rootElement: rootInput,
-            cacheData: true,
-            queryUrl: `https://api.test.com/api/clients/typeahead?name=~QUERY&apikey=84`,
+            rootElement: rootInput,
+            cache: true,
+            queryUrl: `https://api.test.com/api/customer/typeahead?name=~QUERY&apikey=84`,
             wildCard: `~QUERY`,
             minStringLength: 1,
             listClass: 'listClass',
             itemClass: 'itemClass',
-            itemValue: 'KeyName'
+            itemValue: 'CST_Name',
+            onItemSelect: function (selectedItem) {
+                console.log(selectedItem);
+            },
+            onItemsSet: function() {
+                console.log('on items set');
+            }
         };
 
 var caComplete = new CAComplete(autoCompleteOptions);
