@@ -14,7 +14,7 @@ declare class CacheAutoComplete {
     private httpAsync(url, method?);
 }
 interface CacheAutoCompleteOptions {
-    rootElement: string;
+    rootElement: HTMLInputElement;
     cacheData: boolean;
     queryUrl: string;
     wildCard: string;

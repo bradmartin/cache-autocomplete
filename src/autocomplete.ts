@@ -10,13 +10,28 @@ class CacheAutoComplete {
     constructor(options: CacheAutoCompleteOptions) {
         console.log(`start constructor: ${performance.now()}`);
 
-        this.rootElement = <HTMLInputElement>document.getElementById(options.rootElement);
+        this.rootElement = options.rootElement;
         this.list = <HTMLUListElement>document.createElement("ul");
         this.cacheData = options.cacheData;
+
+        this.rootElement.addEventListener("keydown", (ev) => {
+            console.log(ev);
+            /// if TAB press send focus to list
+            if (ev.keyCode === 9) {
+                ev.preventDefault();
+                if (this.items.length > 0) {
+                    console.log(this.list);
+                    (<HTMLLIElement>this.list.childNodes[0]).focus();
+                }
+            }
+        })
 
         /// Add keyup event listener to trigger the GET request
         this.rootElement.addEventListener("keyup", (ev: KeyboardEvent) => {
             let trgt = <HTMLInputElement>(ev.target);
+
+            console.log(ev.keyCode);
+
             /// if the input is empty go ahead and close the suggestion list
             if (trgt.value === "") {
                 this.dumpItems();
@@ -150,6 +165,7 @@ class CacheAutoComplete {
                     this.rootElement.value = selectedItem[optionText];
                     this.destroyPopup();
                 }
+
                 /// DOWN ARROW press
                 if (ev.keyCode === 40 && li.nextSibling) {
                     ev.preventDefault(); /// prevent scrolling of the list
@@ -176,7 +192,7 @@ class CacheAutoComplete {
         /// get coords of the doc.body
         let bodyRect: ClientRect = document.body.getBoundingClientRect();
         let rect: ClientRect = this.rootElement.getBoundingClientRect();
-        let top = rect.top - bodyRect.top + this.rootElement.style.height;
+        let top = rect.top - bodyRect.top + this.rootElement.clientHeight;
         let left = rect.left;
 
         if (!this.popup) {
@@ -286,7 +302,7 @@ class CacheAutoComplete {
 
 
 interface CacheAutoCompleteOptions {
-    rootElement: string;
+    rootElement: HTMLInputElement;
     cacheData: boolean;
     queryUrl: string;
     wildCard: string;
