@@ -21,12 +21,14 @@
   "bugs": "https://github.com/bradmartin/cache-autocomplete/issues",
   "homepage": "https://github.com/bradmartin/cache-autocomplete",
   "devDependencies": {
+    "connect": "^3.5.0",
     "gulp": "^3.9.1",
     "gulp-eslint": "^3.0.1",
     "gulp-rename": "^1.2.2",
     "gulp-size": "^2.1.0",
     "gulp-strip-comments": "^2.4.3",
     "gulp-strip-debug": "^1.1.0",
-    "gulp-uglify": "^2.0.0"
+    "gulp-uglify": "^2.0.0",
+    "serve-static": "^1.11.1"
   }
 }

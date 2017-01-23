@@ -1,32 +1,25 @@
 declare class CacheAutoComplete {
-    RootDomElement: HTMLInputElement;
-    List: HTMLUListElement;
-    Suggestions: any[];
-    CacheData: boolean;
-    QueryUrl: string;
-    private PopupDiv;
+    rootElement: HTMLInputElement;
+    popup: HTMLDivElement;
+    list: HTMLUListElement;
+    items: any[];
+    cacheData: boolean;
+    queryUrl: string;
     constructor(options: CacheAutoCompleteOptions);
     private get(url, bustCache?);
-    setSuggestions(dataArray: any[], optionText: string, listCssClass: string, itemClass: string): Error;
-    private clearSuggestions();
-    private destroyLocationSearchPopup();
+    private setItems(data, optionText, listClass, itemClass);
+    private dumpItems();
+    private destroyPopup();
     private cacheIt(url, result);
     private httpAsync(url, method?);
-    private saveDataToCache(keyName, data);
-    private getCachedData(keyName);
-    private isCacheAvailable();
-}
-interface CacheAutoCompleteHttpResponse {
-    data: any;
-    status: number;
-    statusText: string;
 }
 interface CacheAutoCompleteOptions {
-    elementId: string;
+    rootElement: string;
     cacheData: boolean;
-    remoteUrl: string;
+    queryUrl: string;
     wildCard: string;
-    listItemValue: any;
-    listCssClass: string;
-    itemCssClass: string;
+    minStringLength: number;
+    itemValue: any;
+    listClass: string;
+    itemClass: string;
 }

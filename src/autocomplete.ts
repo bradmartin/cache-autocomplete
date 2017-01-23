@@ -1,64 +1,57 @@
 class CacheAutoComplete {
 
-    public RootDomElement: HTMLInputElement;
-    public List: HTMLUListElement;
-    public Suggestions: any[] = [];
-    public CacheData: boolean = true;
-    public QueryUrl: string;
-    private PopupDiv: HTMLDivElement;
+    public rootElement: HTMLInputElement;
+    public popup: HTMLDivElement;
+    public list: HTMLUListElement;
+    public items: any[] = [];
+    public cacheData: boolean = true;
+    public queryUrl: string;
 
     constructor(options: CacheAutoCompleteOptions) {
         console.log(`start constructor: ${performance.now()}`);
 
-        this.List = <HTMLUListElement>document.createElement("List");
-
-        this.RootDomElement = <HTMLInputElement>document.getElementById(options.elementId);
-        this.CacheData = options.cacheData;
+        this.rootElement = <HTMLInputElement>document.getElementById(options.rootElement);
+        this.list = <HTMLUListElement>document.createElement("ul");
+        this.cacheData = options.cacheData;
 
         /// Add keyup event listener to trigger the GET request
-        this.RootDomElement.addEventListener("keyup", (ev: KeyboardEvent) => {
-            let target = <HTMLInputElement>(ev.target);
-
+        this.rootElement.addEventListener("keyup", (ev: KeyboardEvent) => {
+            let trgt = <HTMLInputElement>(ev.target);
             /// if the input is empty go ahead and close the suggestion list
-            if (target.value === "") {
-                this.clearSuggestions();
-                this.destroyLocationSearchPopup();
+            if (trgt.value === "") {
+                this.dumpItems();
+                this.destroyPopup();
                 return;
             }
 
-            if (target.value.trim().length >= 2) {
+            if (trgt.value.trim().length >= options.minStringLength) {
 
-                this.QueryUrl = options.remoteUrl.replace(options.wildCard, this.RootDomElement.value);
-                console.log(this);
+                this.queryUrl = options.queryUrl.replace(options.wildCard, this.rootElement.value);
 
-                this.get(this.QueryUrl, false).then((data) => {
-                    this.clearSuggestions();
+                this.get(this.queryUrl, false).then((data) => {
+                    this.dumpItems();
 
                     if (typeof data === "string") {
                         data = JSON.parse(data);
                     }
 
-                    let items = [];
-
-                    this.setSuggestions(data, options.listItemValue, options.listCssClass, options.itemCssClass);
+                    this.setItems(data, options.itemValue, options.listClass, options.itemClass);
 
                 }, (err) => {
-                    console.log(err);
+                    this.dumpItems();
+                    this.setItems([{ key: "No Matches" }], "key", "listClass", "itemClass");
                 })
 
-            }
-
-            if (ev.keyCode === 40) {
-                console.log('go down to list');
-                console.log(this);
             }
 
         })
 
         /// if a click occurs on the body close the popup
         document.body.addEventListener("click", (ev) => {
-            this.clearSuggestions();
-            this.destroyLocationSearchPopup();
+            if (this.items.length > 0) {
+                this.dumpItems();
+                this.destroyPopup();
+            }
         })
 
         console.log(`end constructor: ${performance.now()}`);
@@ -74,9 +67,10 @@ class CacheAutoComplete {
         return new Promise((resolve, reject) => {
             let isUrlCached: boolean = false;
 
-            /// check if this url has been cached previously
-            for (let key in window.localStorage) {
-                if (key.lastIndexOf("autocomplete", 0) === 0) {
+            // console.log(`start localStorage loop: ${performance.now()}`);
+            for (let i = window.localStorage.length; i--;) {
+                let key = window.localStorage.key(i);
+                if (key.lastIndexOf("CAC", 0) === 0) {
                     let keyMatchUrl = key.indexOf(url) > -1;
                     if (keyMatchUrl === true) {
                         isUrlCached = true;
@@ -86,72 +80,75 @@ class CacheAutoComplete {
                     break;
                 }
             }
+            // console.log(`end localStorage loop: ${performance.now()}`);
 
             /// is the urlCached already and are we busting the cache
             if (isUrlCached === true && bustCache === true) {
 
-                this.httpAsync(url).then((response) => {
-                    if (this.CacheData === true) {
-                        this.cacheIt(url, response);
+                this.httpAsync(url).then((result) => {
+                    if (this.cacheData === true) {
+                        this.cacheIt(url, result);
                     }
-                    resolve(response.data);
+                    resolve(result);
+                }, (err) => {
+                    reject(err);
                 })
 
             } else if (isUrlCached === true && bustCache === false) {
 
-                let cachedData: string = this.getCachedData(`autocomplete-${url}`);
-                resolve(JSON.parse(cachedData).data);
+                let cachedData: string = window.localStorage.getItem(`CAC-${url}`);
+
+                resolve(JSON.parse(cachedData));
 
             } else if (isUrlCached === false) {
 
-                this.httpAsync(url).then((response) => {
-                    if (this.CacheData === true) {
-                        this.cacheIt(url, response);
+                this.httpAsync(url).then((result) => {
+                    if (this.cacheData === true) {
+                        this.cacheIt(url, result);
                     }
-                    resolve(response.data);
+                    resolve(result);
+                }, (err) => {
+                    reject(err);
                 })
 
             } else {
                 /// wtf
-                console.log(`WHAT DO WE DO?!?!?`);
                 reject("get outta here");
             }
 
         })
     }
 
+
+
     /**
-     * Set the Suggestions for the AutoComplete
-     * @param {Array} dataArray - the array of objects for the list of options.
-     * @param {string} optionText - the text property in the dataArrays objects for the <option>TEXT</option>.
-     * @param {string} optionValue - the <option value="optionValue"></option> for the options in the dataArray.
+     * Set the items for the AutoComplete
+     * @param {Array} data - the array of objects for the list of options.
+     * @param {string} optionText - the text property in the data objects for the <option>TEXT</option>.
+     * @param {string} optionValue - the <option value="optionValue"></option> for the options in the data.
      */
-    public setSuggestions(dataArray: any[], optionText: string, listCssClass: string, itemClass: string) {
-        console.log(`start setSuggestions(): ${performance.now()}`);
+    private setItems(data: any[], optionText: string, listClass: string, itemClass: string) {
+        console.log(`start setItems(): ${performance.now()}`);
 
-        if (!dataArray) {
-            return new Error("A dataArray is required.");
-        }
-
-
-        for (let i = 0; i < dataArray.length; i++) {
-            let item = dataArray[i];
+        for (let i = 0; i < data.length; i++) {
             let li: HTMLLIElement = document.createElement("li");
-            li.setAttribute("class", itemClass);
-            li.setAttribute("id", dataArray.indexOf(item).toString());
-            li.setAttribute("tabindex", "0");
-            li.innerHTML = `${item[optionText]}`;
-            this.Suggestions.push(li);
+
+            li.id = data.indexOf(data[i]).toString();
+            li.tabIndex = 0;
+            li.innerHTML = `${data[i][optionText]}`;
+            li.classList.add(itemClass);
+
+            this.items.push(li);
             li.addEventListener("keydown", (ev: KeyboardEvent) => {
-                let target = <HTMLLIElement>ev.target;
+                let trgt = <HTMLLIElement>ev.target;
 
                 /// ENTER KEY press
                 if (ev.keyCode === 13) {
-                    // get the selected item and map to the dataArray for all items
-                    let selectedItem = dataArray[parseInt(target.id, 10)];
-                    /// set the RootDomElement value
-                    this.RootDomElement.value = selectedItem[optionText];
-                    this.destroyLocationSearchPopup();
+                    // get the selected item and map to the data for all items
+                    let selectedItem = data[parseInt(trgt.id, 10)];
+                    /// set the rootElement value
+                    this.rootElement.value = selectedItem[optionText];
+                    this.destroyPopup();
                 }
                 /// DOWN ARROW press
                 if (ev.keyCode === 40 && li.nextSibling) {
@@ -171,74 +168,76 @@ class CacheAutoComplete {
 
             })
 
-            this.List.style.listStyle = "none";
-            this.List.appendChild(li);
+            this.list.style.listStyle = "none";
+            // this.list.style.padding = "5px";
+            this.list.appendChild(li);
         }
 
         /// get coords of the doc.body
         let bodyRect: ClientRect = document.body.getBoundingClientRect();
-        let rect: ClientRect = this.RootDomElement.getBoundingClientRect();
-        let top = rect.top - bodyRect.top + this.RootDomElement.style.height;
+        let rect: ClientRect = this.rootElement.getBoundingClientRect();
+        let top = rect.top - bodyRect.top + this.rootElement.style.height;
         let left = rect.left;
-        this.PopupDiv = document.createElement("div");
-        this.PopupDiv.style.maxHeight = "260px";
-        this.PopupDiv.style.overflowY = "auto";
-        this.PopupDiv.classList.add(listCssClass)
-        // this.PopupDiv.style.maxWidth = `${this.RootDomElement.clientWidth.toString()}px`;
-        this.PopupDiv.style.top = top.toString();
-        this.PopupDiv.style.left = left.toString();
-        this.PopupDiv.appendChild(this.List);
 
+        if (!this.popup) {
+            this.popup = document.createElement("div");
+        }
+        this.popup.style.maxHeight = "300px";
+        this.popup.style.overflowY = "auto";
+        this.popup.classList.add(listClass);
 
-        /// add the this.PopupDiv to the body (the position is set above)
-        document.body.appendChild(this.PopupDiv);
+        // this.popup.style.maxWidth = `${this.rootElement.clientWidth.toString()}px`;
+        this.popup.style.top = top.toString();
+        this.popup.style.left = left.toString();
+        this.popup.appendChild(this.list);
 
-        this.List.focus();
+        /// add the this.popup to the body (the position is set above)
+        document.body.appendChild(this.popup);
 
+        this.list.focus();
 
-        // add event listener to the <List> list and then parse the element and update the textboxes
-        this.List.addEventListener("click", (listClickEvent: Event) => {
+        // add event listener to the <list> list and then parse the element and update the textboxes
+        this.list.addEventListener("click", (listClickEvent: Event) => {
             let listTarget = <HTMLLIElement>listClickEvent.target;
-            if (listTarget && listTarget.nodeName === "LI") {
+            if (listTarget && listTarget.nodeName.toLowerCase() === "li") {
                 // get id of the clicked <li> and map to the data array
-                let selectedItem = dataArray[parseInt(listTarget.id, 10)];
-                console.log(selectedItem);
-                this.RootDomElement.value = selectedItem[optionText];
-                this.clearSuggestions();
-                this.destroyLocationSearchPopup();
+                let selectedItem = data[parseInt(listTarget.id, 10)];
+                this.rootElement.value = selectedItem[optionText];
+                this.dumpItems();
+                this.destroyPopup();
             }
         })
 
-        console.log(`end setSuggestions(): ${performance.now()}`);
+        console.log(`end setItems(): ${performance.now()}`);
 
     }
 
 
     /**
-     * Remove the list items from the List.
+     * Remove the list items from the list.
      */
-    private clearSuggestions() {
-        if (this.List.getElementsByTagName("li").length > 0) {
-            console.log(`start clearSuggestions(): ${performance.now()}`);
+    private dumpItems() {
+        if (this.list.getElementsByTagName("li").length > 0) {
+            console.log(`start dumpSuggestions(): ${performance.now()}`);
 
-            while (this.List.firstChild) {
-                this.List.removeChild(this.List.firstChild);
+            while (this.list.firstChild) {
+                this.list.removeChild(this.list.firstChild);
             }
-            this.Suggestions = [];
-            console.log(`end clearSuggestions(): ${performance.now()}`);
+            this.items = [];
+            console.log(`end dumpSuggestions(): ${performance.now()}`);
         }
     }
 
 
     /**
-     * Helper function to remove the location search popup from DOM.
+     * Helper function to remove the popup from DOM.
      */
-    private destroyLocationSearchPopup(): void {
-        console.log(`start destroyLocationSearchPopup(): ${performance.now()}`);
-        if (this.PopupDiv && this.PopupDiv.parentNode) {
-            this.PopupDiv.parentNode.removeChild(this.PopupDiv);
+    private destroyPopup(): void {
+        console.log(`start destroyPopup(): ${performance.now()}`);
+        if (this.popup.parentNode) {
+            this.popup.parentNode.removeChild(this.popup);
         }
-        console.log(`end destroyLocationSearchPopup(): ${performance.now()}`);
+        console.log(`end destroyPopup(): ${performance.now()}`);
     }
 
 
@@ -247,29 +246,26 @@ class CacheAutoComplete {
      * @param {string} url - the query Url for the AutoComplete
      * @param {AutoCompleteHttpResponse} result - the response from httpAsync();
      */
-    private cacheIt(url: string, result: CacheAutoCompleteHttpResponse) {
-        if (this.isCacheAvailable()) {
-            console.log(`start cacheIt(): ${performance.now()}`);
-            this.saveDataToCache(`autocomplete-${url}`, result);
-            console.log(`end cacheIt(): ${performance.now()}`);
+    private cacheIt(url: string, result: any) {
+        if (window.localStorage) {
+            console.log(`start saveDataToCache(): ${performance.now()}`);
+            window.localStorage.setItem(`CAC-${url}`, JSON.stringify(result));
+            console.log(`end saveDataToCache(): ${performance.now()}`);
         }
     }
 
     /**
      * Async XMLHttpRequest
      */
-    private httpAsync(url: string, method: string = "GET"): Promise<CacheAutoCompleteHttpResponse> {
+    private httpAsync(url: string, method: string = "GET"): Promise<any> {
         return new Promise((resolve, reject) => {
 
             let xhr: XMLHttpRequest = new XMLHttpRequest();
             xhr.open(method, url, true);
 
             xhr.onload = () => {
-                let result: CacheAutoCompleteHttpResponse = {
-                    data: xhr.response,
-                    status: xhr.status,
-                    statusText: xhr.statusText
-                };
+
+                let result: any = xhr.response;
 
                 if (xhr.status >= 200 && xhr.status < 300) {
                     resolve(result);
@@ -286,43 +282,16 @@ class CacheAutoComplete {
         });
     }
 
-    private saveDataToCache(keyName: string, data: Object) {
-        console.log(`start saveDataToCache(): ${performance.now()}`);
-        if (keyName && data) {
-            window.localStorage.setItem(keyName, JSON.stringify(data));
-        }
-        console.log(`end saveDataToCache(): ${performance.now()}`);
-    }
-
-    private getCachedData(keyName: string) {
-        if (keyName && this.isCacheAvailable()) {
-            return window.localStorage.getItem(keyName);
-        }
-    }
-
-    private isCacheAvailable(): boolean {
-        if (window.localStorage) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-
 }
 
-interface CacheAutoCompleteHttpResponse {
-    data: any;
-    status: number;
-    statusText: string;
-}
 
 interface CacheAutoCompleteOptions {
-    elementId: string;
+    rootElement: string;
     cacheData: boolean;
-    remoteUrl: string;
+    queryUrl: string;
     wildCard: string;
-    listItemValue: any;
-    listCssClass: string;
-    itemCssClass: string;
+    minStringLength: number;
+    itemValue: any;
+    listClass: string;
+    itemClass: string;
 }

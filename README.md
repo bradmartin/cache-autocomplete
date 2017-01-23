@@ -3,8 +3,8 @@
 # Cache-AutoComplete
 ### Probably not what you're looking for, but it works for me :stuck_out_tongue: :poop:
 
-### Minified = 4.5kb 
-### gzipped = 1.5kb
+### Minified = 3.28kb 
+### .min gzipped = 1.26kb
 
 ![CacheAutoComplete](screens/cacheAutoComplete.gif)
 
@@ -23,13 +23,14 @@ the network requests.
 #### CacheAutoCompleteOptions 
 ```ts
 interface CacheAutoCompleteOptions {
-    elementId: string; /// the input element to create autocomplete with
+    rootElement: string; /// the input element to create autocomplete with
     cacheData: boolean; /// boolean to set whether to cache the response
-    remoteUrl: string; /// the url to request
+    queryUrl: string; /// the url to request
     wildCard: string; /// the wildCard tells the autoComplete where to inject the root element's value into the query
-    listItemValue: any; /// the object property in the response data from the server.
-    listCssClass: string; /// cssClass for the created <ul> element.
-    itemCssClass: string; /// cssClass for the <li> in the <ul> list
+    minStringLength: number; /// minimum string value before queries are sent for autocompletion.
+    itemValue: any; /// the object property in the response data from the server.
+    listClass: string; /// cssClass for the created <ul> element.
+    itemClass: string; /// cssClass for the <li> in the <ul> list
 }
 ```
 #### HTML
@@ -51,15 +52,16 @@ interface CacheAutoCompleteOptions {
 #### JS
 ```js
 var autoCompleteOptions = {
-            elementId: "myAutoComplete",
+           rootElement: "autoThis",
             cacheData: true,
-            remoteUrl: `https://api.demo.com/api/clients/typeahead?name=~QUERY`,
+            queryUrl: `https://api.test.com/api/clients/typeahead?name=~QUERY&apikey=84`,
             wildCard: `~QUERY`,
-            listCssClass: 'listClass',
-            itemCssClass: 'itemClass',
-            listItemValue: 'CustomerName'
-        }
+            minStringLength: 1,
+            listClass: 'listClass',
+            itemClass: 'itemClass',
+            itemValue: 'KeyName'
+        };
 
-var autoComplete = new AutoComplete(autoCompleteOptions);
+var autoComplete = new CacheAutoComplete(autoCompleteOptions);
 
 ```

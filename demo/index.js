@@ -4,14 +4,16 @@ document.addEventListener("readystatechange", () => {
     if (document.readyState === "complete") {
 
         autoComplete = new CacheAutoComplete({
-            elementId: "autoThis",
+            rootElement: "autoThis",
             cacheData: true,
-            remoteUrl: `https://api.demo.com/api/client/typeahead?name=~QUERY&apikey=84`,
+            queryUrl: `https://api.test.com/api/clients/typeahead?name=~QUERY&apikey=84`,
             wildCard: `~QUERY`,
-            listCssClass: 'listClass',
-            itemCssClass: 'itemClass',
-            listItemValue: 'CST_Name'
+            minStringLength: 1,
+            listClass: 'listClass',
+            itemClass: 'itemClass',
+            itemValue: 'CST_Name'
         });
 
     }
 })
+
