@@ -1,19 +1,19 @@
-declare class CacheAutoComplete {
+declare class CAComplete {
     rootElement: HTMLInputElement;
     popup: HTMLDivElement;
     list: HTMLUListElement;
     items: any[];
     cacheData: boolean;
     queryUrl: string;
-    constructor(options: CacheAutoCompleteOptions);
+    constructor(options: CACompleteOptions);
     private get(url, bustCache?);
     private setItems(data, optionText, listClass, itemClass);
-    private dumpItems();
-    private destroyPopup();
+    private xItems();
+    private xPopup();
     private cacheIt(url, result);
     private httpAsync(url, method?);
 }
-interface CacheAutoCompleteOptions {
+interface CACompleteOptions {
     rootElement: HTMLInputElement;
     cacheData: boolean;
     queryUrl: string;

@@ -1,10 +1,10 @@
-var autoComplete;
+var caComplete;
 
 document.addEventListener("readystatechange", () => {
     if (document.readyState === "complete") {
 
         var rootInput = document.getElementById("autoThis");
-        autoComplete = new CacheAutoComplete({
+        caComplete = new CAComplete({
             rootElement: rootInput,
             cacheData: true,
             queryUrl: `https://api.test.com/api/customer/typeahead?name=~QUERY&apikey=84`,

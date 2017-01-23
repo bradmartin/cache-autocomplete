@@ -22,7 +22,7 @@ the network requests.
 
 #### CacheAutoCompleteOptions 
 ```ts
-interface CacheAutoCompleteOptions {
+interface CACompleteOptions {
     rootElement: string; /// the input element to create autocomplete with
     cacheData: boolean; /// boolean to set whether to cache the response
     queryUrl: string; /// the url to request
@@ -52,7 +52,7 @@ interface CacheAutoCompleteOptions {
 #### JS
 ```js
 var rootInput = document.getElementById("autoThis");
-var autoCompleteOptions = {
+var CACompleteOptions = {
            rootElement: rootInput,
             cacheData: true,
             queryUrl: `https://api.test.com/api/clients/typeahead?name=~QUERY&apikey=84`,
@@ -63,6 +63,6 @@ var autoCompleteOptions = {
             itemValue: 'KeyName'
         };
 
-var autoComplete = new CacheAutoComplete(autoCompleteOptions);
+var caComplete = new CAComplete(autoCompleteOptions);
 
 ```

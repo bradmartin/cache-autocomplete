@@ -1,4 +1,4 @@
-class CacheAutoComplete {
+class CAComplete {
 
     public rootElement: HTMLInputElement;
     public popup: HTMLDivElement;
@@ -7,7 +7,7 @@ class CacheAutoComplete {
     public cacheData: boolean = true;
     public queryUrl: string;
 
-    constructor(options: CacheAutoCompleteOptions) {
+    constructor(options: CACompleteOptions) {
         console.log(`start constructor: ${performance.now()}`);
 
         this.rootElement = options.rootElement;
@@ -15,14 +15,10 @@ class CacheAutoComplete {
         this.cacheData = options.cacheData;
 
         this.rootElement.addEventListener("keydown", (ev) => {
-            console.log(ev);
             /// if TAB press send focus to list
-            if (ev.keyCode === 9) {
+            if (ev.keyCode === 9 && this.items.length > 0) {
                 ev.preventDefault();
-                if (this.items.length > 0) {
-                    console.log(this.list);
-                    (<HTMLLIElement>this.list.childNodes[0]).focus();
-                }
+                (<HTMLLIElement>this.list.childNodes[0]).focus();
             }
         })
 
@@ -34,8 +30,8 @@ class CacheAutoComplete {
 
             /// if the input is empty go ahead and close the suggestion list
             if (trgt.value === "") {
-                this.dumpItems();
-                this.destroyPopup();
+                this.xItems();
+                this.xPopup();
                 return;
             }
 
@@ -44,7 +40,7 @@ class CacheAutoComplete {
                 this.queryUrl = options.queryUrl.replace(options.wildCard, this.rootElement.value);
 
                 this.get(this.queryUrl, false).then((data) => {
-                    this.dumpItems();
+                    this.xItems();
 
                     if (typeof data === "string") {
                         data = JSON.parse(data);
@@ -53,7 +49,7 @@ class CacheAutoComplete {
                     this.setItems(data, options.itemValue, options.listClass, options.itemClass);
 
                 }, (err) => {
-                    this.dumpItems();
+                    this.xItems();
                     this.setItems([{ key: "No Matches" }], "key", "listClass", "itemClass");
                 })
 
@@ -64,8 +60,8 @@ class CacheAutoComplete {
         /// if a click occurs on the body close the popup
         document.body.addEventListener("click", (ev) => {
             if (this.items.length > 0) {
-                this.dumpItems();
-                this.destroyPopup();
+                this.xItems();
+                this.xPopup();
             }
         })
 
@@ -163,7 +159,7 @@ class CacheAutoComplete {
                     let selectedItem = data[parseInt(trgt.id, 10)];
                     /// set the rootElement value
                     this.rootElement.value = selectedItem[optionText];
-                    this.destroyPopup();
+                    this.xPopup();
                 }
 
                 /// DOWN ARROW press
@@ -219,8 +215,8 @@ class CacheAutoComplete {
                 // get id of the clicked <li> and map to the data array
                 let selectedItem = data[parseInt(listTarget.id, 10)];
                 this.rootElement.value = selectedItem[optionText];
-                this.dumpItems();
-                this.destroyPopup();
+                this.xItems();
+                this.xPopup();
             }
         })
 
@@ -232,7 +228,7 @@ class CacheAutoComplete {
     /**
      * Remove the list items from the list.
      */
-    private dumpItems() {
+    private xItems() {
         if (this.list.getElementsByTagName("li").length > 0) {
             console.log(`start dumpSuggestions(): ${performance.now()}`);
 
@@ -248,7 +244,7 @@ class CacheAutoComplete {
     /**
      * Helper function to remove the popup from DOM.
      */
-    private destroyPopup(): void {
+    private xPopup(): void {
         console.log(`start destroyPopup(): ${performance.now()}`);
         if (this.popup.parentNode) {
             this.popup.parentNode.removeChild(this.popup);
@@ -260,7 +256,7 @@ class CacheAutoComplete {
     /**
      * Cache the response for the url in the query()
      * @param {string} url - the query Url for the AutoComplete
-     * @param {AutoCompleteHttpResponse} result - the response from httpAsync();
+     * @param {any} result - the response from httpAsync();
      */
     private cacheIt(url: string, result: any) {
         if (window.localStorage) {
@@ -301,7 +297,7 @@ class CacheAutoComplete {
 }
 
 
-interface CacheAutoCompleteOptions {
+interface CACompleteOptions {
     rootElement: HTMLInputElement;
     cacheData: boolean;
     queryUrl: string;
