@@ -40,13 +40,32 @@ interface CACompleteOptions {
 #### CSS
 ```css
 .listClass {
-    border-radius: 4;
-    border: 1px solid #444;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #fff;
+    border-radius: 0;
+    box-shadow: 0 1px 3px 0 rgba(0,0,0,.2), 0 1px 1px 0 rgba(0,0,0,.14), 0 2px 1px -1px rgba(0,0,0,.12);
 }
 .itemClass {
-    color: #fff;
-    padding: 5px;
-    background-color: #333;
+    color: rgb(33,33,33);
+    padding: 6px;
+    cursor: pointer;
+    text-overflow: ellipsis;
+    height: 48px;
+    line-height: 48px;
+    padding: 0 15px;
+    overflow: hidden;
+    white-space: nowrap;
+    transition: background .15s linear;
+    background: transparent;
+}
+.itemClass:hover {
+    background-color: rgb(238,238,238);
+}
+
+.itemClass:focus {
+    outline: none;
+    background-color: #EEEEEE;
+    color: #444;
 }
 ```
 #### JS
