@@ -194,13 +194,15 @@ class CAComplete {
         if (!this.popup) {
             this.popup = document.createElement("div");
         }
-        this.popup.style.maxHeight = "300px";
-        this.popup.style.overflowY = "auto";
-        this.popup.classList.add(listClass);
 
-        // this.popup.style.maxWidth = `${this.rootElement.clientWidth.toString()}px`;
+        this.popup.classList.add(listClass);
         this.popup.style.top = top.toString();
         this.popup.style.left = left.toString();
+        this.popup.style.position = "absolute";
+        this.popup.style.zIndex = "99999";
+        this.popup.style.overflowY = "auto";
+        this.popup.style.maxHeight = "300px";
+        this.popup.style.width = `${this.rootElement.clientWidth.toString()}px`;
         this.popup.appendChild(this.list);
 
         /// add the this.popup to the body (the position is set above)
