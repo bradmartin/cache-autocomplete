@@ -7,7 +7,7 @@ document.addEventListener("readystatechange", () => {
         caComplete = new CAComplete({
             rootElement: rootInput,
             cache: true,
-            queryUrl: `https://api.test.com/api/customer/typeahead?name=~QUERY&apikey=84`,
+            queryUrl: `https://api.test.com/api/customer/typeahead?name=~QUERY&apikey=324`,
             wildCard: `~QUERY`,
             minStringLength: 1,
             listClass: 'listClass',
@@ -16,8 +16,9 @@ document.addEventListener("readystatechange", () => {
             onItemSelect: function (selectedItem) {
                 console.log(selectedItem);
             },
-            onItemsSet: function() {
-                console.log('on items set');
+            onItemsSet: function () {
+                /// do whatever you want here
+                console.log(this);
             }
         });
 

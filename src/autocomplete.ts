@@ -10,8 +10,6 @@ class CAComplete {
     public onItemsSet: Function;
 
     constructor(options: CACompleteOptions) {
-        let t0 = performance.now();
-
         this.rootElement = options.rootElement;
         this.list = <HTMLUListElement>document.createElement("ul");
         this.cache = options.cache;
@@ -75,8 +73,6 @@ class CAComplete {
             }
         })
 
-        let t1 = performance.now();
-        console.log(`Constructor took ${(t1 - t0)}`);
     }
 
 
@@ -89,9 +85,8 @@ class CAComplete {
         return new Promise((resolve, reject) => {
             let isUrlCached: boolean = false;
 
-            // console.log(`start localStorage loop: ${performance.now()}`);
-            for (let i = window.localStorage.length; i--;) {
-                let key = window.localStorage.key(i);
+            for (let i = localStorage.length; i--;) {
+                let key = localStorage.key(i);
                 if (key.lastIndexOf("CAC", 0) === 0) {
                     let keyMatchUrl = key.indexOf(url) > -1;
                     if (keyMatchUrl === true) {
@@ -102,7 +97,6 @@ class CAComplete {
                     break;
                 }
             }
-            // console.log(`end localStorage loop: ${performance.now()}`);
 
             /// is the urlCached already and are we busting the cache
             if (isUrlCached && bustCache) {
@@ -118,7 +112,7 @@ class CAComplete {
 
             } else if (isUrlCached && !bustCache) {
 
-                let cachedData: string = window.localStorage.getItem(`CAC-${url}`);
+                let cachedData: string = localStorage.getItem(`CAC-${url}`);
 
                 resolve(JSON.parse(cachedData));
 
@@ -146,18 +140,15 @@ class CAComplete {
     /**
      * Set the items for the AutoComplete
      * @param {Array} data - the array of objects for the list of options.
-     * @param {string} optionText - the text property in the data objects for the <option>TEXT</option>.
-     * @param {string} optionValue - the <option value="optionValue"></option> for the options in the data.
+     * @param {string} itemValue - the text property in the data objects for the <li>TEXT</li>.
      */
-    private setItems(data: any[], optionText: string, listClass: string, itemClass: string) {
-        let t0 = performance.now();
-
+    private setItems(data: any[], itemValue: string, listClass: string, itemClass: string) {
         for (let i = 0; i < data.length; i++) {
             let li: HTMLLIElement = document.createElement("li");
 
             li.id = data.indexOf(data[i]).toString();
             li.tabIndex = 0;
-            li.innerHTML = `${data[i][optionText]}`;
+            li.innerHTML = `${data[i][itemValue]}`;
             li.classList.add(itemClass);
 
             li.addEventListener("keydown", (ev: KeyboardEvent) => {
@@ -166,20 +157,21 @@ class CAComplete {
                 /// ENTER KEY press
                 if (ev.keyCode === 13) {
                     // get the selected item and map to the data for all items
-                    let selectedItem = data[parseInt(trgt.id, 10)];
+                    let item = data[parseInt(trgt.id, 10)];
                     /// set the rootElement value
-                    this.rootElement.value = selectedItem[optionText];
+                    this.rootElement.value = item[itemValue];
                     this.xPopup();
-                    this.onItemSelect(selectedItem);
+                    this.onItemSelect(item);
                 }
 
                 /// DOWN ARROW press
                 if (ev.keyCode === 40 && this.items.length > 0) {
                     ev.preventDefault(); /// prevent scrolling of the list
                     /// shift focus down the list
-                    if (li.nextSibling) {
-                        if (li.nextSibling.nodeName.toLowerCase() === "li") {
-                            (<HTMLLIElement>li.nextSibling).focus();
+                    let nSib = li.nextSibling;
+                    if (nSib) {
+                        if (nSib.nodeName.toLowerCase() === "li") {
+                            (<HTMLLIElement>nSib).focus();
                         }
                     } else {
                         /// shift focus to the top of the list if we are at the bottom
@@ -191,9 +183,11 @@ class CAComplete {
                 if (ev.keyCode === 38 && this.items.length > 0) {
                     ev.preventDefault(); /// prevent scrolling of the list
                     /// shift focus to the next list item
-                    if (li.previousSibling) {
-                        if (li.previousSibling.nodeName.toLowerCase() === "li") {
-                            (<HTMLLIElement>li.previousSibling).focus();
+                    let pSib = li.previousSibling;
+                    // if (li.previousSibling) {
+                    if (pSib) {
+                        if (pSib.nodeName.toLowerCase() === "li") {
+                            (<HTMLLIElement>pSib).focus();
                         }
                     } else { /// move focus to the rootElement (input)
                         this.rootElement.focus();
@@ -203,26 +197,28 @@ class CAComplete {
             })
 
             // add event listener to the <list> list and then parse the element and update the textboxes
-            li.addEventListener("click", (listClickEvent: Event) => {
-                let trgt = <HTMLLIElement>listClickEvent.target;
+            li.addEventListener("click", (ev: Event) => {
+                let trgt = <HTMLLIElement>ev.target;
                 if (trgt && trgt.nodeName.toLowerCase() === "li") {
                     // get id of the clicked <li> and map to the data array
-                    let selectedItem = data[parseInt(trgt.id, 10)];
-                    this.rootElement.value = selectedItem[optionText];
+                    let item = data[parseInt(trgt.id, 10)];
+                    this.rootElement.value = item[itemValue];
                     this.xItems();
                     this.xPopup();
-                    this.onItemSelect(selectedItem);
+                    if (this.onItemSelect) {
+                        this.onItemSelect(item);
+                    }
                 }
             })
 
             /// push to the items prop - if not worth having, remove in update
             this.items.push(li);
 
-            this.list.style.listStyle = "none";
-            this.list.style.padding = "0";
-            this.list.style.margin = "0";
             this.list.appendChild(li);
         }
+
+        /// Set the styles for the list
+        Object.assign(this.list.style, { listStyle: "none", padding: "0", margin: "0" });
 
         /// get coords of the doc.body
         let bodyRect: ClientRect = document.body.getBoundingClientRect();
@@ -234,14 +230,20 @@ class CAComplete {
             this.popup = document.createElement("div");
         }
 
+        /// Add user specified Css class
         this.popup.classList.add(listClass);
-        this.popup.style.top = top.toString();
-        this.popup.style.left = left.toString();
-        this.popup.style.position = "absolute";
-        this.popup.style.zIndex = "99999";
-        this.popup.style.overflowY = "auto";
-        this.popup.style.maxHeight = "300px";
-        this.popup.style.width = `${this.rootElement.clientWidth.toString()}px`;
+
+        /// Set styles for the popup div
+        Object.assign(this.popup.style, {
+            top: top.toString(),
+            left: left.toString(),
+            position: "absolute",
+            zIndex: "99999",
+            overflowY: "auto",
+            maxHeight: "300px",
+            width: `${this.rootElement.clientWidth.toString()}px`
+        });
+
         this.popup.appendChild(this.list);
 
         /// add the popup to the DOM
@@ -249,11 +251,9 @@ class CAComplete {
 
         this.list.focus();
 
-        this.onItemsSet();
-
-        let t1 = performance.now();
-        console.log(`setItems() took ${(t1 - t0)} milliseconds.`);
-
+        if (this.onItemsSet) {
+            this.onItemsSet();
+        }
     }
 
 
@@ -286,14 +286,9 @@ class CAComplete {
      * @param {any} result - the response from httpAsync();
      */
     private cacheIt(url: string, data: any) {
-        let t0 = performance.now();
-
-        if (window.localStorage) {
-            window.localStorage.setItem(`CAC-${url}`, JSON.stringify(data));
+        if (localStorage) {
+            localStorage.setItem(`CAC-${url}`, JSON.stringify(data));
         }
-
-        let t1 = performance.now();
-        console.log(`cacheIt() took ${(t1 - t0)} milliseconds.`);
     }
 
 

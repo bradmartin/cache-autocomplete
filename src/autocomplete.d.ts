@@ -9,7 +9,7 @@ declare class CAComplete {
     onItemsSet: Function;
     constructor(options: CACompleteOptions);
     private get(url, bustCache?);
-    private setItems(data, optionText, listClass, itemClass);
+    private setItems(data, itemValue, listClass, itemClass);
     private xItems();
     private xPopup();
     private cacheIt(url, data);

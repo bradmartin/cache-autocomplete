@@ -3,7 +3,7 @@
 # Cache-AutoComplete
 ### Probably not what you're looking for, but it works for me :stuck_out_tongue: :poop:
 
-### Minified = 3.87kb 
+### Minified = 3.63kb 
 ### .min gzipped = 1.39kb
 
 ![CacheAutoComplete](screens/cacheAutoComplete.gif)
@@ -93,7 +93,7 @@ interface CACompleteOptions {
     itemValue: any; /// The response data Key property to display
     listClass: string; /// css class to style the list
     itemClass: string; /// css class to style items in the list.
-    onItemSelect: Function; /// function to execute when an item is selected.
+    onItemSelect: Function; /// function to execute when an item is selected - returns the selected item object
     onItemsSet: Function; /// function to execute when the items are set for the data list.
 }
 ```
