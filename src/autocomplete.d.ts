@@ -8,6 +8,7 @@ declare class CAComplete {
     onItemSelect: Function;
     onItemsSet: Function;
     constructor(options: CACompleteOptions);
+    clearCache(url?: string): void;
     private get(url, bustCache?);
     private setItems(data, itemValue, listClass, itemClass);
     private xItems();

@@ -81,6 +81,11 @@ var caComplete = new CAComplete(autoCompleteOptions);
 ```
 
 
+#### Public Methods
+
+- `clearCache(url?: string)` - If a url is specified only that url is removed from storage.
+If no url is specified all CacheAutoComplete items are removed from storage.
+
 
 #### CacheAutoCompleteOptions 
 ```ts

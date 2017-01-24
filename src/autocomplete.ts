@@ -77,6 +77,27 @@ class CAComplete {
 
 
     /**
+     * Delete a single key (url) from storage or all CacheAutoComplete keys.
+     * If no url is passed as an argument, all keys and data will be removed from storage.
+     * @param {string} [url] - The url to delete from storage.
+     */
+    public clearCache(url?: string) {
+        /// delete a single key in storage
+        if (url) {
+            localStorage.removeItem(`CAC-${url}`);
+        } else {
+            /// delete all CAcomplete keys in storage
+            for (let i = localStorage.length; i--;) {
+                let key = localStorage.key(i);
+                if (key.lastIndexOf("CAC", 0) === 0) {
+                    localStorage.removeItem(key);
+                }
+            }
+        }
+    }
+
+
+    /**
      * Query a url using the AutoComplete instance
      * @param {string} url - the url to query.
      * @param {boolean} bustCache - true to not return cached data if exists.
