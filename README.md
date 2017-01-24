@@ -9,36 +9,45 @@
 ![CacheAutoComplete](screens/cacheAutoComplete.gif)
 
 ## Explanation
-I needed a simple auto complete for a web app I was working on.
-After searching around, nothing fit my use case or desire. 
-This provides a simple auto complete that caches the response 
-from the HTTP request into localStorage. This is optional but utilizing
-the cache you remove the network request. Generating the component with
-cached data takes on avg. 10ms with 200 items in the data list and avoiding
-the network requests.
+I needed a simple auto complete component for a web app that supported keyboard navigation.
+I wanted something light weight and flexible.
+After searching around, nothing fit my use case or desire. This component
+is not styled out of the box. Below are some styles that mimic 
+Google's Material Design spec. PRs welcome to improve functionality.
+Just want to keep this light weight :smile:
+
 
 ### Usage
 
+#### JS
+```js
+var rootInput = document.getElementById("myAutoComplete");
+var CACompleteOptions = {
+            rootElement: rootInput,
+            cache: true,
+            queryUrl: `https://api.test.com/api/customer/typeahead?name=~QUERY&apikey=84`,
+            wildCard: `~QUERY`,
+            minStringLength: 1,
+            listClass: 'listClass',
+            itemClass: 'itemClass',
+            itemValue: 'CST_Name',
+            onItemSelect: function (selectedItem) {
+                console.log(selectedItem);
+            },
+            onItemsSet: function() {
+                console.log("The items in the datalist have been set.");
+            }
+        };
 
-#### CacheAutoCompleteOptions 
-```ts
-interface CACompleteOptions {
-    rootElement: HTMLInputElement;
-    cache: boolean;
-    queryUrl: string;
-    wildCard: string;
-    minStringLength: number;
-    itemValue: any;
-    listClass: string;
-    itemClass: string;
-    onItemSelect: Function;
-    onItemsSet: Function;
-}
+var caComplete = new CAComplete(autoCompleteOptions);
+
 ```
+
 #### HTML
 ```html
 <input id="myAutoComplete" type="text" />
 ```
+
 #### CSS
 ```css
 .listClass {
@@ -70,26 +79,21 @@ interface CACompleteOptions {
     color: #444;
 }
 ```
-#### JS
-```js
-var rootInput = document.getElementById("myAutoComplete");
-var CACompleteOptions = {
-            rootElement: rootInput,
-            cache: true,
-            queryUrl: `https://api.test.com/api/customer/typeahead?name=~QUERY&apikey=84`,
-            wildCard: `~QUERY`,
-            minStringLength: 1,
-            listClass: 'listClass',
-            itemClass: 'itemClass',
-            itemValue: 'CST_Name',
-            onItemSelect: function (selectedItem) {
-                console.log(selectedItem);
-            },
-            onItemsSet: function() {
-                console.log('on items set');
-            }
-        };
 
-var caComplete = new CAComplete(autoCompleteOptions);
 
+
+#### CacheAutoCompleteOptions 
+```ts
+interface CACompleteOptions {
+    rootElement: HTMLInputElement; /// The HTML Input element to use as the anchor.
+    cache: boolean; /// True to cache response data.
+    queryUrl: string; /// The URL to ping for remote data.
+    wildCard: string; /// The wildcard should be set in the `queryUrl` - we use it to inject the input's value into the queryUrl.
+    minStringLength: number; /// Minimum input string length before triggering XMLHttpRequest
+    itemValue: any; /// The response data Key property to display
+    listClass: string; /// css class to style the list
+    itemClass: string; /// css class to style items in the list.
+    onItemSelect: Function; /// function to execute when an item is selected.
+    onItemsSet: Function; /// function to execute when the items are set for the data list.
+}
 ```
