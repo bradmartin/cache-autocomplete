@@ -205,7 +205,6 @@ class CAComplete {
                     ev.preventDefault(); /// prevent scrolling of the list
                     /// shift focus to the next list item
                     let pSib = li.previousSibling;
-                    // if (li.previousSibling) {
                     if (pSib) {
                         if (pSib.nodeName.toLowerCase() === "li") {
                             (<HTMLLIElement>pSib).focus();
@@ -242,10 +241,9 @@ class CAComplete {
         Object.assign(this.list.style, { listStyle: "none", padding: "0", margin: "0" });
 
         /// get coords of the doc.body
-        let bodyRect: ClientRect = document.body.getBoundingClientRect();
-        let rect: ClientRect = this.rootElement.getBoundingClientRect();
-        let top: number = rect.top - bodyRect.top + this.rootElement.clientHeight;
-        let left: number = rect.left;
+        let rects: ClientRectList = this.rootElement.getClientRects();
+        let top: number = rects[0].bottom;
+        let left: number = rects[0].left;
 
         if (!this.popup) {
             this.popup = document.createElement("div");

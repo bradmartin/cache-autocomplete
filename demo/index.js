@@ -7,7 +7,7 @@ document.addEventListener("readystatechange", () => {
         caComplete = new CAComplete({
             rootElement: rootInput,
             cache: true,
-            queryUrl: `https://api.nastek.com/api/customer/typeahead?name=~QUERY&apikey=324`,
+            queryUrl: `https://api.test.com/api/customer/typeahead?name=~QUERY&apikey=324`,
             wildCard: `~QUERY`,
             minStringLength: 1,
             listClass: 'listClass',
