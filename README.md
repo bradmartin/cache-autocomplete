@@ -3,8 +3,8 @@
 # Cache-AutoComplete
 ### Probably not what you're looking for, but it works for me :stuck_out_tongue: :poop:
 
-### Minified = 3.75kb 
-### .min gzipped = 1.41kb
+### Minified = 3.66kb 
+### .min gzipped = 1.37kb
 
 ![CacheAutoComplete](screens/cacheAutoComplete.gif)
 
@@ -16,6 +16,9 @@ is not styled out of the box. Below are some styles that mimic
 Google's Material Design spec. PRs welcome to improve functionality.
 Just want to keep this light weight :smile:
 
+
+## Installation
+`npm install cache-autocomplete`
 
 ### Usage
 
