@@ -14,6 +14,7 @@ document.addEventListener("readystatechange", () => {
             itemClass: 'itemClass',
             itemValue: 'CST_Name',
             onItemSelect: function (selectedItem) {
+                /// returns the selected item object from the items array
                 console.log(selectedItem);
             },
             onItemsSet: function () {

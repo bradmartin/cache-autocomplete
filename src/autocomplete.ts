@@ -240,11 +240,6 @@ class CAComplete {
         /// Set the styles for the list
         Object.assign(this.list.style, { listStyle: "none", padding: "0", margin: "0" });
 
-        /// get coords of the doc.body
-        let rects: ClientRectList = this.rootElement.getClientRects();
-        let top: number = rects[0].bottom;
-        let left: number = rects[0].left;
-
         if (!this.popup) {
             this.popup = document.createElement("div");
         }
@@ -254,10 +249,8 @@ class CAComplete {
 
         /// Set styles for the popup div
         Object.assign(this.popup.style, {
-            top: top.toString(),
-            left: left.toString(),
             position: "absolute",
-            zIndex: "99999",
+            zIndex: "999999999",
             overflowY: "auto",
             maxHeight: "300px",
             width: `${this.rootElement.clientWidth.toString()}px`
