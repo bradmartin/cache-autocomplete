@@ -26,5 +26,5 @@ export interface CACompleteOptions {
     listClass: string;
     itemClass: string;
     onItemSelect: Function;
-    onItemsSet: Function;
+    onItemsSet?: Function;
 }
