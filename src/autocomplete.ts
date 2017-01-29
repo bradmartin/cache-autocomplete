@@ -1,4 +1,4 @@
-class CAComplete {
+export class CAComplete {
 
     public rootElement: HTMLInputElement;
     public popup: HTMLDivElement;
@@ -286,7 +286,7 @@ class CAComplete {
      * Helper function to remove the popup from DOM.
      */
     private xPopup(): void {
-        if (this.popup.parentNode) {
+        if (this.popup) {
             this.popup.parentNode.removeChild(this.popup);
         }
     }
@@ -333,7 +333,7 @@ class CAComplete {
 }
 
 
-interface CACompleteOptions {
+export interface CACompleteOptions {
     rootElement: HTMLInputElement;
     cache: boolean;
     queryUrl: string;

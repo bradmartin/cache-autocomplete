@@ -2,7 +2,7 @@
   "name": "cache-autocomplete",
   "version": "1.2.2",
   "description": "JS component for autocomplete with caching.",
-  "main": "autocomplete",
+  "main": "dist/autocomplete",
   "typings": "autocomplete.d.ts",
   "repository": {
     "type": "git",
