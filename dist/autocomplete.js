@@ -108,6 +108,7 @@ var CAComplete = (function () {
     };
     CAComplete.prototype.setItems = function (data, itemValue, listClass, itemClass, noMatchesFound) {
         var _this = this;
+        if (noMatchesFound === void 0) { noMatchesFound = false; }
         var _loop_1 = function (i) {
             var li = document.createElement("li");
             li.id = data.indexOf(data[i]).toString();

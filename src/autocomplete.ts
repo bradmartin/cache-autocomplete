@@ -163,7 +163,7 @@ export class CAComplete {
      * @param {Array} data - the array of objects for the list of options.
      * @param {string} itemValue - the text property in the data objects for the <li>TEXT</li>.
      */
-    private setItems(data: any[], itemValue: string, listClass: string, itemClass: string, noMatchesFound: boolean) {
+    private setItems(data: any[], itemValue: string, listClass: string, itemClass: string, noMatchesFound: boolean = false) {
         for (let i = 0; i < data.length; i++) {
             let li: HTMLLIElement = document.createElement("li");
 
