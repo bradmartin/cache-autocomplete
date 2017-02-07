@@ -10,7 +10,7 @@ export declare class CAComplete {
     constructor(options: CACompleteOptions);
     clearCache(url?: string): void;
     private get(url, bustCache?);
-    private setItems(data, itemValue, listClass, itemClass);
+    private setItems(data, itemValue, listClass, itemClass, noMatchesFound);
     private xItems();
     private xPopup();
     private cacheIt(url, data);

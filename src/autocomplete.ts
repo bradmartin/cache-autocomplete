@@ -58,7 +58,7 @@ export class CAComplete {
 
                 }, (err) => {
                     this.xItems();
-                    this.setItems([{ key: "No Matches" }], "key", options.listClass, options.itemClass);
+                    this.setItems([{ key: "No Matches" }], "key", options.listClass, options.itemClass, true);
                 })
 
             }
@@ -163,7 +163,7 @@ export class CAComplete {
      * @param {Array} data - the array of objects for the list of options.
      * @param {string} itemValue - the text property in the data objects for the <li>TEXT</li>.
      */
-    private setItems(data: any[], itemValue: string, listClass: string, itemClass: string) {
+    private setItems(data: any[], itemValue: string, listClass: string, itemClass: string, noMatchesFound: boolean) {
         for (let i = 0; i < data.length; i++) {
             let li: HTMLLIElement = document.createElement("li");
 
@@ -172,64 +172,68 @@ export class CAComplete {
             li.innerHTML = `${data[i][itemValue]}`;
             li.classList.add(itemClass);
 
-            li.addEventListener("keydown", (ev: KeyboardEvent) => {
-                let trgt = <HTMLLIElement>ev.target;
+            /// Only set event listeners if there are matching items. When we set `No Matches found` we pass a flag to skip this
+            if (!noMatchesFound) {
+                li.addEventListener("keydown", (ev: KeyboardEvent) => {
+                    let trgt = <HTMLLIElement>ev.target;
 
-                /// ENTER KEY press
-                if (ev.keyCode === 13) {
-                    // get the selected item and map to the data for all items
-                    let item = data[parseInt(trgt.id, 10)];
-                    /// set the rootElement value
-                    this.rootElement.value = item[itemValue];
-                    this.xPopup();
-                    this.onItemSelect(item);
-                }
-
-                /// DOWN ARROW press
-                if (ev.keyCode === 40 && this.items.length > 0) {
-                    ev.preventDefault(); /// prevent scrolling of the list
-                    /// shift focus down the list
-                    let nSib = li.nextSibling;
-                    if (nSib) {
-                        if (nSib.nodeName.toLowerCase() === "li") {
-                            (<HTMLLIElement>nSib).focus();
-                        }
-                    } else {
-                        /// shift focus to the top of the list if we are at the bottom
-                        (<HTMLLIElement>this.list.childNodes[0]).focus();
-                    }
-                }
-
-                /// UP ARROW press
-                if (ev.keyCode === 38 && this.items.length > 0) {
-                    ev.preventDefault(); /// prevent scrolling of the list
-                    /// shift focus to the next list item
-                    let pSib = li.previousSibling;
-                    if (pSib) {
-                        if (pSib.nodeName.toLowerCase() === "li") {
-                            (<HTMLLIElement>pSib).focus();
-                        }
-                    } else { /// move focus to the rootElement (input)
-                        this.rootElement.focus();
-                    }
-                }
-
-            })
-
-            // add event listener to the <list> list and then parse the element and update the textboxes
-            li.addEventListener("click", (ev: Event) => {
-                let trgt = <HTMLLIElement>ev.target;
-                if (trgt && trgt.nodeName.toLowerCase() === "li") {
-                    // get id of the clicked <li> and map to the data array
-                    let item = data[parseInt(trgt.id, 10)];
-                    this.rootElement.value = item[itemValue];
-                    this.xItems();
-                    this.xPopup();
-                    if (this.onItemSelect) {
+                    /// ENTER KEY press
+                    if (ev.keyCode === 13) {
+                        // get the selected item and map to the data for all items
+                        let item = data[parseInt(trgt.id, 10)];
+                        /// set the rootElement value
+                        this.rootElement.value = item[itemValue];
+                        this.xPopup();
                         this.onItemSelect(item);
                     }
-                }
-            })
+
+                    /// DOWN ARROW press
+                    if (ev.keyCode === 40 && this.items.length > 0) {
+                        ev.preventDefault(); /// prevent scrolling of the list
+                        /// shift focus down the list
+                        let nSib = li.nextSibling;
+                        if (nSib) {
+                            if (nSib.nodeName.toLowerCase() === "li") {
+                                (<HTMLLIElement>nSib).focus();
+                            }
+                        } else {
+                            /// shift focus to the top of the list if we are at the bottom
+                            (<HTMLLIElement>this.list.childNodes[0]).focus();
+                        }
+                    }
+
+                    /// UP ARROW press
+                    if (ev.keyCode === 38 && this.items.length > 0) {
+                        ev.preventDefault(); /// prevent scrolling of the list
+                        /// shift focus to the next list item
+                        let pSib = li.previousSibling;
+                        if (pSib) {
+                            if (pSib.nodeName.toLowerCase() === "li") {
+                                (<HTMLLIElement>pSib).focus();
+                            }
+                        } else { /// move focus to the rootElement (input)
+                            this.rootElement.focus();
+                        }
+                    }
+
+                })
+
+                // add event listener to the <list> list and then parse the element and update the textboxes
+                li.addEventListener("click", (ev: Event) => {
+                    let trgt = <HTMLLIElement>ev.target;
+                    if (trgt && trgt.nodeName.toLowerCase() === "li") {
+                        // get id of the clicked <li> and map to the data array
+                        let item = data[parseInt(trgt.id, 10)];
+                        this.rootElement.value = item[itemValue];
+                        this.xItems();
+                        this.xPopup();
+                        if (this.onItemSelect) {
+                            this.onItemSelect(item);
+                        }
+                    }
+                })
+            }
+
 
             /// push to the items prop - if not worth having, remove in update
             this.items.push(li);

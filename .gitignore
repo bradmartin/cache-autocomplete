@@ -1,5 +1,6 @@
 *.js
 !demo/*.js
+!dist/*.js
 *.js.map
 *.log
 *.d.ts
