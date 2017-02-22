@@ -8,7 +8,7 @@ document.addEventListener("readystatechange", () => {
         cacheautocomplete.create({
             rootElement: rootInput,
             cache: true,
-            queryUrl: `https://api.nastek.com/api/customer/typeahead?name=~QUERY&apikey=324`,
+            queryUrl: `https://api.demo.com/api/customer/typeahead?name=~QUERY&apikey=324`,
             wildCard: `~QUERY`,
             minStringLength: 1,
             listClass: 'listClass',
