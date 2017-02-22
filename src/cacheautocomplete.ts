@@ -52,14 +52,16 @@ export function create(options: CACompleteOptions): void {
 
                 setItems(data, options.itemValue, options.listClass, options.itemClass);
                 /// if a click occurs on the body close the popup
-                document.addEventListener("click", docBodyClickEvent);
+                document.addEventListener("click", trashEventListener);
 
 
             }, (err) => {
                 xItems();
                 setItems([{ key: "No Matches" }], "key", options.listClass, options.itemClass, true);
                 /// if a click occurs on the body close the popup
-                document.addEventListener("click", docBodyClickEvent);
+                document.addEventListener("click", trashEventListener);
+
+                window.addEventListener("resize", trashEventListener);
 
             });
 
@@ -91,13 +93,14 @@ export function clearCache(url?: string): void {
 }
 
 
-function docBodyClickEvent(ev: KeyboardEvent) {
+function trashEventListener(ev: KeyboardEvent) {
     console.log(ev);
     if (items.length > 0) {
         xItems();
         xPopup();
     }
 }
+
 
 
 /**
@@ -247,6 +250,13 @@ function setItems(data: any[], itemValue: string, listClass: string, itemClass: 
     /// Set the styles for the list
     Object.assign(list.style, { listStyle: "none", padding: "0", margin: "0" });
 
+
+    /// get coords of the doc.body
+    const bodyRect: ClientRect = document.body.getBoundingClientRect();
+    const rect: ClientRect = rootElement.getBoundingClientRect();
+    const top: number = rect.top - bodyRect.top + rootElement.clientHeight;
+    const left: number = rect.left;
+
     if (!popup) {
         popup = document.createElement("div");
     }
@@ -257,6 +267,8 @@ function setItems(data: any[], itemValue: string, listClass: string, itemClass: 
     /// Set styles for the popup div
     Object.assign(popup.style, {
         position: "absolute",
+        top: top.toString(),
+        left: left.toString(),
         zIndex: "999999999",
         overflowY: "auto",
         maxHeight: "300px",
@@ -266,7 +278,7 @@ function setItems(data: any[], itemValue: string, listClass: string, itemClass: 
     popup.appendChild(list);
 
     /// add the popup to the DOM
-    rootElement.parentNode.insertBefore(popup, rootElement.nextSibling);
+    document.body.appendChild(popup);
 
     list.focus();
 }
@@ -292,7 +304,8 @@ function xPopup(): void {
     if (popup && popup.parentNode) {
         popup.parentNode.removeChild(popup);
     }
-    document.removeEventListener("click", docBodyClickEvent);
+    document.removeEventListener("click", trashEventListener);
+    window.removeEventListener("resize", trashEventListener);
 }
 
 

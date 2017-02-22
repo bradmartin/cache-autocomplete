@@ -119,11 +119,12 @@ function create(options) {
                     data = JSON.parse(data);
                 }
                 setItems(data, options.itemValue, options.listClass, options.itemClass);
-                document.addEventListener("click", docBodyClickEvent);
+                document.addEventListener("click", trashEventListener);
             }, function (err) {
                 xItems();
                 setItems([{ key: "No Matches" }], "key", options.listClass, options.itemClass, true);
-                document.addEventListener("click", docBodyClickEvent);
+                document.addEventListener("click", trashEventListener);
+                window.addEventListener("resize", trashEventListener);
             });
         }
     });
@@ -143,7 +144,7 @@ function clearCache(url) {
     }
 }
 exports.clearCache = clearCache;
-function docBodyClickEvent(ev) {
+function trashEventListener(ev) {
     console.log(ev);
     if (items.length > 0) {
         xItems();
@@ -257,19 +258,25 @@ function setItems(data, itemValue, listClass, itemClass, noMatchesFound) {
         _loop_1(i);
     }
     Object.assign(list.style, { listStyle: "none", padding: "0", margin: "0" });
+    var bodyRect = document.body.getBoundingClientRect();
+    var rect = rootElement.getBoundingClientRect();
+    var top = rect.top - bodyRect.top + rootElement.clientHeight;
+    var left = rect.left;
     if (!popup) {
         popup = document.createElement("div");
     }
     popup.classList.add(listClass);
     Object.assign(popup.style, {
         position: "absolute",
+        top: top.toString(),
+        left: left.toString(),
         zIndex: "999999999",
         overflowY: "auto",
         maxHeight: "300px",
         width: rootElement.clientWidth.toString() + "px"
     });
     popup.appendChild(list);
-    rootElement.parentNode.insertBefore(popup, rootElement.nextSibling);
+    document.body.appendChild(popup);
     list.focus();
 }
 function xItems() {
@@ -284,7 +291,8 @@ function xPopup() {
     if (popup && popup.parentNode) {
         popup.parentNode.removeChild(popup);
     }
-    document.removeEventListener("click", docBodyClickEvent);
+    document.removeEventListener("click", trashEventListener);
+    window.removeEventListener("resize", trashEventListener);
 }
 function cacheIt(url, data) {
     if (localStorage) {
