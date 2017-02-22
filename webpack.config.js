@@ -1,7 +1,7 @@
 var webpack = require('webpack');
 
 var config = {
-    entry: __dirname + '/src/autocomplete.js',
+    entry: __dirname + '/src/cacheautocomplete.js',
     devtool: 'source-map',
     output: {
         path: __dirname + '/dist',

@@ -3,7 +3,7 @@
   "version": "2.0.0",
   "description": "JS component for autocomplete with caching.",
   "main": "dist/cacheautocomplete",
-  "typings": "autocomplete.d.ts",
+  "typings": "cacheautocomplete.d.ts",
   "repository": {
     "type": "git",
     "url": "https://github.com/bradmartin/cache-autocomplete"

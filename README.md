@@ -21,7 +21,7 @@ Just want to keep this light weight :smile:
 `npm install cache-autocomplete`
 
 ### Usage
-
+`cacheautocomplete` is exposed as a library so using a <script> tag on your html will work. You can also import/require what you need using the module.
 #### JS
 ```js
 var rootInput = document.getElementById("myAutoComplete");
@@ -42,7 +42,7 @@ var CACompleteOptions = {
             }
         };
 
-var caComplete = new CAComplete(autoCompleteOptions);
+cacheautocomplete.create(autoCompleteOptions);
 
 ```
 
@@ -85,7 +85,7 @@ var caComplete = new CAComplete(autoCompleteOptions);
 
 
 #### Public Methods
-
+- `create(opts: CACompleteOptions)` - create a cache autocomplete using the options object.
 - `clearCache(url?: string)` - If a url is specified only that url is removed from storage.
 If no url is specified all CacheAutoComplete items are removed from storage.
 
@@ -102,6 +102,5 @@ interface CACompleteOptions {
     listClass: string; /// css class to style the list
     itemClass: string; /// css class to style items in the list.
     onItemSelect: Function; /// function to execute when an item is selected - returns the selected item object
-    onItemsSet: Function; /// function to execute when the items are set for the data list.
 }
 ```
