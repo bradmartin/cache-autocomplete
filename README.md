@@ -21,7 +21,7 @@ Just want to keep this light weight :smile:
 `npm install cache-autocomplete`
 
 ### Usage
-`cacheautocomplete` is exposed as a library so using a <script> tag on your html will work. You can also import/require what you need using the module.
+`cacheautocomplete` is exposed as a library so using a `<script>` tag on your html will work. You can also import/require what you need using the module.
 #### JS
 ```js
 var rootInput = document.getElementById("myAutoComplete");
