@@ -36,9 +36,6 @@ var CACompleteOptions = {
             itemValue: 'CST_Name',
             onItemSelect: function (selectedItem) {
                 console.log(selectedItem);
-            },
-            onItemsSet: function() {
-                console.log("The items in the datalist have been set.");
             }
         };
 
