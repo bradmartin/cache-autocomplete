@@ -1,2 +1,318 @@
-!function(e,t){"object"==typeof exports&&"object"==typeof module?module.exports=t():"function"==typeof define&&define.amd?define("cacheautocomplete",[],t):"object"==typeof exports?exports.cacheautocomplete=t():e.cacheautocomplete=t()}(this,function(){return function(e){function t(o){if(n[o])return n[o].exports;var r=n[o]={i:o,l:!1,exports:{}};return e[o].call(r.exports,r,r.exports,t),r.l=!0,r.exports}var n={};return t.m=e,t.c=n,t.i=function(e){return e},t.d=function(e,n,o){t.o(e,n)||Object.defineProperty(e,n,{configurable:!1,enumerable:!0,get:o})},t.n=function(e){var n=e&&e.__esModule?function(){return e.default}:function(){return e};return t.d(n,"a",n),n},t.o=function(e,t){return Object.prototype.hasOwnProperty.call(e,t)},t.p="",t(t.s=0)}([function(e,t,n){"use strict";function o(e){f=e.rootElement,p=document.createElement("ul"),C=e.cache,m=e.onItemSelect,f.addEventListener("keydown",function(e){9===e.keyCode&&h.length>0&&(e.preventDefault(),p.childNodes[0].focus()),40===e.keyCode&&h.length>0&&(e.preventDefault(),p.childNodes[0].focus())}),f.addEventListener("keyup",function(t){var n=t.target;return""===n.value?(c(),void s()):void(n.value.trim().length>=e.minStringLength&&(g=e.queryUrl.replace(e.wildCard,f.value),a(g,!1).then(function(t){c(),"string"==typeof t&&(t=JSON.parse(t)),l(t,e.itemValue,e.listClass,e.itemClass),document.addEventListener("click",i)},function(t){c(),l([{key:"No Matches"}],"key",e.listClass,e.itemClass,!0),document.addEventListener("click",i)})))})}function r(e){if(e)localStorage.removeItem("CAC-"+e);else for(var t=localStorage.length;t--;){var n=localStorage.key(t);0===n.lastIndexOf("CAC",0)&&localStorage.removeItem(n)}}function i(e){console.log(e),h.length>0&&(c(),s())}function a(e,t){return void 0===t&&(t=!1),new Promise(function(n,o){for(var r=!1,i=localStorage.length;i--;){var a=localStorage.key(i);if(0===a.lastIndexOf("CAC",0)){var l=a.indexOf(e)>-1;l===!0&&(r=!0)}if(r===!0)break}if(r&&t)d(e).then(function(t){C&&u(e,t),n(t)},function(e){o(e)});else if(r&&!t){var c=localStorage.getItem("CAC-"+e);n(JSON.parse(c))}else r?o("get outta here"):d(e).then(function(t){C&&u(e,t),n(t)},function(e){o(e)})})}function l(e,t,n,o,r){void 0===r&&(r=!1);for(var i=function(n){var i=document.createElement("li");i.id=e.indexOf(e[n]).toString(),i.tabIndex=0,i.innerHTML=""+e[n][t],i.classList.add(o),r||(i.addEventListener("keydown",function(n){var o=n.target;if(13===n.keyCode){var r=e[parseInt(o.id,10)];f.value=r[t],s(),m(r)}if(40===n.keyCode&&h.length>0){n.preventDefault();var a=i.nextSibling;a?"li"===a.nodeName.toLowerCase()&&a.focus():p.childNodes[0].focus()}if(38===n.keyCode&&h.length>0){n.preventDefault();var l=i.previousSibling;l?"li"===l.nodeName.toLowerCase()&&l.focus():f.focus()}}),i.addEventListener("click",function(n){var o=n.target;if(o&&"li"===o.nodeName.toLowerCase()){var r=e[parseInt(o.id,10)];f.value=r[t],c(),s(),m&&m(r)}})),h.push(i),p.appendChild(i)},a=0;a<e.length;a++)i(a);Object.assign(p.style,{listStyle:"none",padding:"0",margin:"0"}),v||(v=document.createElement("div")),v.classList.add(n),Object.assign(v.style,{position:"absolute",zIndex:"999999999",overflowY:"auto",maxHeight:"300px",width:f.clientWidth.toString()+"px"}),v.appendChild(p),f.parentNode.insertBefore(v,f.nextSibling),p.focus()}function c(){if(p.getElementsByTagName("li").length>0){for(;p.firstChild;)p.removeChild(p.firstChild);h=[]}}function s(){v&&v.parentNode&&v.parentNode.removeChild(v),document.removeEventListener("click",i)}function u(e,t){localStorage&&localStorage.setItem("CAC-"+e,JSON.stringify(t))}function d(e,t){return void 0===t&&(t="GET"),new Promise(function(n,o){var r=new XMLHttpRequest;r.open(t,e,!0),r.onload=function(){r.status>=200&&r.status<300?n(r.response):o(r.statusText)},r.onerror=function(){o(r.statusText)},r.send()})}var f,v,p,g,m,h=[],C=!0;t.create=o,t.clearCache=r}])});
+(function webpackUniversalModuleDefinition(root, factory) {
+	if(typeof exports === 'object' && typeof module === 'object')
+		module.exports = factory();
+	else if(typeof define === 'function' && define.amd)
+		define("cacheautocomplete", [], factory);
+	else if(typeof exports === 'object')
+		exports["cacheautocomplete"] = factory();
+	else
+		root["cacheautocomplete"] = factory();
+})(this, function() {
+return /******/ (function(modules) { // webpackBootstrap
+/******/ 	// The module cache
+/******/ 	var installedModules = {};
+/******/
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+/******/
+/******/ 		// Check if module is in cache
+/******/ 		if(installedModules[moduleId])
+/******/ 			return installedModules[moduleId].exports;
+/******/
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = installedModules[moduleId] = {
+/******/ 			i: moduleId,
+/******/ 			l: false,
+/******/ 			exports: {}
+/******/ 		};
+/******/
+/******/ 		// Execute the module function
+/******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
+/******/
+/******/ 		// Flag the module as loaded
+/******/ 		module.l = true;
+/******/
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+/******/
+/******/
+/******/ 	// expose the modules object (__webpack_modules__)
+/******/ 	__webpack_require__.m = modules;
+/******/
+/******/ 	// expose the module cache
+/******/ 	__webpack_require__.c = installedModules;
+/******/
+/******/ 	// identity function for calling harmony imports with the correct context
+/******/ 	__webpack_require__.i = function(value) { return value; };
+/******/
+/******/ 	// define getter function for harmony exports
+/******/ 	__webpack_require__.d = function(exports, name, getter) {
+/******/ 		if(!__webpack_require__.o(exports, name)) {
+/******/ 			Object.defineProperty(exports, name, {
+/******/ 				configurable: false,
+/******/ 				enumerable: true,
+/******/ 				get: getter
+/******/ 			});
+/******/ 		}
+/******/ 	};
+/******/
+/******/ 	// getDefaultExport function for compatibility with non-harmony modules
+/******/ 	__webpack_require__.n = function(module) {
+/******/ 		var getter = module && module.__esModule ?
+/******/ 			function getDefault() { return module['default']; } :
+/******/ 			function getModuleExports() { return module; };
+/******/ 		__webpack_require__.d(getter, 'a', getter);
+/******/ 		return getter;
+/******/ 	};
+/******/
+/******/ 	// Object.prototype.hasOwnProperty.call
+/******/ 	__webpack_require__.o = function(object, property) { return Object.prototype.hasOwnProperty.call(object, property); };
+/******/
+/******/ 	// __webpack_public_path__
+/******/ 	__webpack_require__.p = "";
+/******/
+/******/ 	// Load entry module and return exports
+/******/ 	return __webpack_require__(__webpack_require__.s = 0);
+/******/ })
+/************************************************************************/
+/******/ ([
+/* 0 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var rootElement;
+var popup;
+var list;
+var items = [];
+var cache = true;
+var queryUrl;
+var onItemSelect;
+function create(options) {
+    rootElement = options.rootElement;
+    list = document.createElement("ul");
+    cache = options.cache;
+    onItemSelect = options.onItemSelect;
+    rootElement.addEventListener("keydown", function (ev) {
+        if (ev.keyCode === 9 && items.length > 0) {
+            ev.preventDefault();
+            list.childNodes[0].focus();
+        }
+        if (ev.keyCode === 40 && items.length > 0) {
+            ev.preventDefault();
+            list.childNodes[0].focus();
+        }
+    });
+    rootElement.addEventListener("keyup", function (ev) {
+        var trgt = (ev.target);
+        if (trgt.value === "") {
+            xItems();
+            xPopup();
+            return;
+        }
+        if (trgt.value.trim().length >= options.minStringLength) {
+            queryUrl = options.queryUrl.replace(options.wildCard, rootElement.value);
+            get(queryUrl, false).then(function (data) {
+                xItems();
+                if (typeof data === "string") {
+                    data = JSON.parse(data);
+                }
+                setItems(data, options.itemValue, options.listClass, options.itemClass);
+                document.addEventListener("click", docBodyClickEvent);
+            }, function (err) {
+                xItems();
+                setItems([{ key: "No Matches" }], "key", options.listClass, options.itemClass, true);
+                document.addEventListener("click", docBodyClickEvent);
+            });
+        }
+    });
+}
+exports.create = create;
+function clearCache(url) {
+    if (url) {
+        localStorage.removeItem("CAC-" + url);
+    }
+    else {
+        for (var i = localStorage.length; i--;) {
+            var key = localStorage.key(i);
+            if (key.lastIndexOf("CAC", 0) === 0) {
+                localStorage.removeItem(key);
+            }
+        }
+    }
+}
+exports.clearCache = clearCache;
+function docBodyClickEvent(ev) {
+    console.log(ev);
+    if (items.length > 0) {
+        xItems();
+        xPopup();
+    }
+}
+function get(url, bustCache) {
+    if (bustCache === void 0) { bustCache = false; }
+    return new Promise(function (resolve, reject) {
+        var isUrlCached = false;
+        for (var i = localStorage.length; i--;) {
+            var key = localStorage.key(i);
+            if (key.lastIndexOf("CAC", 0) === 0) {
+                var keyMatchUrl = key.indexOf(url) > -1;
+                if (keyMatchUrl === true) {
+                    isUrlCached = true;
+                }
+            }
+            if (isUrlCached === true) {
+                break;
+            }
+        }
+        if (isUrlCached && bustCache) {
+            http(url).then(function (result) {
+                if (cache) {
+                    cacheIt(url, result);
+                }
+                resolve(result);
+            }, function (err) {
+                reject(err);
+            });
+        }
+        else if (isUrlCached && !bustCache) {
+            var cachedData = localStorage.getItem("CAC-" + url);
+            resolve(JSON.parse(cachedData));
+        }
+        else if (!isUrlCached) {
+            http(url).then(function (result) {
+                if (cache) {
+                    cacheIt(url, result);
+                }
+                resolve(result);
+            }, function (err) {
+                reject(err);
+            });
+        }
+        else {
+            reject("get outta here");
+        }
+    });
+}
+function setItems(data, itemValue, listClass, itemClass, noMatchesFound) {
+    if (noMatchesFound === void 0) { noMatchesFound = false; }
+    var _loop_1 = function (i) {
+        var li = document.createElement("li");
+        li.id = data.indexOf(data[i]).toString();
+        li.tabIndex = 0;
+        li.innerHTML = "" + data[i][itemValue];
+        li.classList.add(itemClass);
+        if (!noMatchesFound) {
+            li.addEventListener("keydown", function (ev) {
+                var trgt = ev.target;
+                if (ev.keyCode === 13) {
+                    var item = data[parseInt(trgt.id, 10)];
+                    rootElement.value = item[itemValue];
+                    xPopup();
+                    onItemSelect(item);
+                }
+                if (ev.keyCode === 40 && items.length > 0) {
+                    ev.preventDefault();
+                    var nSib = li.nextSibling;
+                    if (nSib) {
+                        if (nSib.nodeName.toLowerCase() === "li") {
+                            nSib.focus();
+                        }
+                    }
+                    else {
+                        list.childNodes[0].focus();
+                    }
+                }
+                if (ev.keyCode === 38 && items.length > 0) {
+                    ev.preventDefault();
+                    var pSib = li.previousSibling;
+                    if (pSib) {
+                        if (pSib.nodeName.toLowerCase() === "li") {
+                            pSib.focus();
+                        }
+                    }
+                    else {
+                        rootElement.focus();
+                    }
+                }
+            });
+            li.addEventListener("click", function (ev) {
+                var trgt = ev.target;
+                if (trgt && trgt.nodeName.toLowerCase() === "li") {
+                    var item = data[parseInt(trgt.id, 10)];
+                    rootElement.value = item[itemValue];
+                    xItems();
+                    xPopup();
+                    if (onItemSelect) {
+                        onItemSelect(item);
+                    }
+                }
+            });
+        }
+        items.push(li);
+        list.appendChild(li);
+    };
+    for (var i = 0; i < data.length; i++) {
+        _loop_1(i);
+    }
+    Object.assign(list.style, { listStyle: "none", padding: "0", margin: "0" });
+    if (!popup) {
+        popup = document.createElement("div");
+    }
+    popup.classList.add(listClass);
+    Object.assign(popup.style, {
+        position: "absolute",
+        zIndex: "999999999",
+        overflowY: "auto",
+        maxHeight: "300px",
+        width: rootElement.clientWidth.toString() + "px"
+    });
+    popup.appendChild(list);
+    rootElement.parentNode.insertBefore(popup, rootElement.nextSibling);
+    list.focus();
+}
+function xItems() {
+    if (list.getElementsByTagName("li").length > 0) {
+        while (list.firstChild) {
+            list.removeChild(list.firstChild);
+        }
+        items = [];
+    }
+}
+function xPopup() {
+    if (popup && popup.parentNode) {
+        popup.parentNode.removeChild(popup);
+    }
+    document.removeEventListener("click", docBodyClickEvent);
+}
+function cacheIt(url, data) {
+    if (localStorage) {
+        localStorage.setItem("CAC-" + url, JSON.stringify(data));
+    }
+}
+function http(url, method) {
+    if (method === void 0) { method = "GET"; }
+    return new Promise(function (resolve, reject) {
+        var xhr = new XMLHttpRequest();
+        xhr.open(method, url, true);
+        xhr.onload = function () {
+            if (xhr.status >= 200 && xhr.status < 300) {
+                resolve(xhr.response);
+            }
+            else {
+                reject(xhr.statusText);
+            }
+        };
+        xhr.onerror = function () {
+            reject(xhr.statusText);
+        };
+        xhr.send();
+    });
+}
+//# sourceMappingURL=cacheautocomplete.js.map
+
+/***/ })
+/******/ ]);
+});
 //# sourceMappingURL=cacheautocomplete.js.map
