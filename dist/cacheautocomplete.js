@@ -112,7 +112,7 @@ function create(options) {
             return;
         }
         if (trgt.value.trim().length >= options.minStringLength) {
-            queryUrl = options.queryUrl.replace(options.wildCard, rootElement.value);
+            queryUrl = options.queryUrl.replace(options.wildCard, encodeURIComponent(rootElement.value));
             get(queryUrl, false).then(function (data) {
                 xItems();
                 if (typeof data === "string") {

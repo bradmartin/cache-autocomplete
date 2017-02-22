@@ -41,7 +41,7 @@ export function create(options: CACompleteOptions): void {
 
         if (trgt.value.trim().length >= options.minStringLength) {
 
-            queryUrl = options.queryUrl.replace(options.wildCard, rootElement.value);
+            queryUrl = options.queryUrl.replace(options.wildCard, encodeURIComponent(rootElement.value));
 
             get(queryUrl, false).then((data) => {
                 xItems();
