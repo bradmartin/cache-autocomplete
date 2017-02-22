@@ -13,7 +13,7 @@ app/
 *.ts
 *.js.map
 *.md
-!autocomplete.d.ts
+!cacheautocomplete.d.ts
 tsconfig.json
 src/
 node_modules/

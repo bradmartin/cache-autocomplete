@@ -6,7 +6,7 @@
 *.js.map
 *.log
 *.d.ts
-!autocomplete.d.ts
+!cacheautocomplete.d.ts
 demo/lib
 demo/*.d.ts
 demo/platforms
