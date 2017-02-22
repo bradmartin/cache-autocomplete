@@ -1,6 +1,8 @@
 *.js
 !demo/*.js
 !dist/*.js
+!server.js
+!webpack.config.js
 *.js.map
 *.log
 *.d.ts

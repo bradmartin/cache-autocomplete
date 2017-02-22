@@ -1,12 +1,17 @@
 {
   "name": "cache-autocomplete",
-  "version": "1.2.4",
+  "version": "2.0.0",
   "description": "JS component for autocomplete with caching.",
-  "main": "dist/autocomplete",
+  "main": "dist/cacheautocomplete",
   "typings": "autocomplete.d.ts",
   "repository": {
     "type": "git",
     "url": "https://github.com/bradmartin/cache-autocomplete"
+  },
+  "scripts": {
+    "clean-dist": "rimraf dist",
+    "dev": "tsc && webpack --progress --colors && node server.js",
+    "build": "tsc && webpack --progress --colors -p"
   },
   "keywords": [
     "TypeScript",
@@ -21,14 +26,9 @@
   "bugs": "https://github.com/bradmartin/cache-autocomplete/issues",
   "homepage": "https://github.com/bradmartin/cache-autocomplete",
   "devDependencies": {
-    "connect": "^3.5.0",
-    "gulp": "^3.9.1",
-    "gulp-eslint": "^3.0.1",
-    "gulp-rename": "^1.2.2",
-    "gulp-size": "^2.1.0",
-    "gulp-strip-comments": "^2.4.3",
-    "gulp-strip-debug": "^1.1.0",
-    "gulp-uglify": "^2.0.0",
+    "uglify-js": "^2.7.5",
+    "uglifyjs-webpack-plugin": "^0.2.1",
+    "webpack": "^2.2.1",
     "serve-static": "^1.11.1"
   }
 }

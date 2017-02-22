@@ -1,13 +1,14 @@
-var caComplete;
+/// if using a module loader you can import what you need from the 'cache-autocomplete' module
+/// or just use the exposed library 'cache-autocomplete'
 
 document.addEventListener("readystatechange", () => {
     if (document.readyState === "complete") {
 
         var rootInput = document.getElementById("autoThis");
-        caComplete = new CAComplete({
+        cacheautocomplete.create({
             rootElement: rootInput,
             cache: true,
-            queryUrl: `https://api.test.com/api/customer/typeahead?name=~QUERY&apikey=324`,
+            queryUrl: `https://api.nastek.com/api/customer/typeahead?name=~QUERY&apikey=324`,
             wildCard: `~QUERY`,
             minStringLength: 1,
             listClass: 'listClass',
@@ -16,13 +17,12 @@ document.addEventListener("readystatechange", () => {
             onItemSelect: function (selectedItem) {
                 /// returns the selected item object from the items array
                 console.log(selectedItem);
-            },
-            onItemsSet: function () {
-                /// do whatever you want here
-                console.log(this);
             }
         });
 
     }
 })
 
+function clearTheCache() {
+    cacheautocomplete.clearCache();
+}
