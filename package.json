@@ -26,6 +26,7 @@
   "bugs": "https://github.com/bradmartin/cache-autocomplete/issues",
   "homepage": "https://github.com/bradmartin/cache-autocomplete",
   "devDependencies": {
+    "connect": "^3.6.0",
     "uglify-js": "^2.7.5",
     "uglifyjs-webpack-plugin": "^0.2.1",
     "webpack": "^2.2.1",
