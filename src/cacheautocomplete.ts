@@ -52,6 +52,7 @@ export function create(opts: CACompleteOptions): void {
                 if (data) {
                     setItems(data, opts.itemTemplate, opts.listClass, opts.itemClass)
                     document.addEventListener("click", trashEventListener)
+                    window.addEventListener("resize", trashEventListener)
                 }
             }, (err) => {
                 deleteItems()
