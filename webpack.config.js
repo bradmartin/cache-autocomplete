@@ -24,7 +24,7 @@ var config = {
       }
     ]
   },
-  plugins: [new webpack.HotModuleReplacementPlugin()],
+  // plugins: [new webpack.HotModuleReplacementPlugin()],
   devServer: {
     contentBase: path.join(__dirname, "demo"),
     compress: true,
