@@ -8,7 +8,7 @@
 
 ![CacheAutoComplete](screens/cacheAutoComplete.gif)
 
-## Explanation
+### Explanation
 I needed a simple auto complete component for a web app that supported keyboard navigation.
 I wanted something light weight and flexible.
 After searching around, nothing fit my use case or desire. The component
@@ -16,12 +16,12 @@ defaults to Material Design-like styling. This is customizable by setting `itemC
 Just want to keep this light weight :smile:
 
 
-## Installation
+### Installation
 `npm install cache-autocomplete`
 
 ### Usage
 `cacheautocomplete` is exposed as a library thanks to Webpack so using a `<script>` tag on your html will work. You can also import/require what you need using the module if you're using a module loader for your app.
-#### JS
+### JS
 ```js
 var rootInput = document.getElementById("myAutoComplete");
 var CACompleteOptions = {
@@ -35,9 +35,6 @@ var CACompleteOptions = {
             onItemSelect: function (selectedItem) { // optional - callback when an item is selected via keyboard or mouse event
                 console.log(selectedItem);
                 rootInput.value = selectedItem.SomeProp;
-            },
-            onItemsCleared: function () { // optional - callback when the items list is cleared
-                console.log('The items are empty. Maybe inform your user or do something else...');
             }
         };
 
@@ -45,18 +42,18 @@ cacheautocomplete.create(autoCompleteOptions);
 
 ```
 
-#### HTML
+### HTML
 ```html
 <input id="myAutoComplete" type="text" />
 ```
 
-#### Public Methods
+#### ublic Methods
 - `create(opts: CACompleteOptions)` - create a cache autocomplete using the options object.
 - `clearCache(url?: string)` - If a url is specified only that url is removed from storage.
 If no url is specified all CacheAutoComplete items are removed from storage.
 
 
-#### CacheAutoCompleteOptions 
+### CacheAutoCompleteOptions 
 ```ts
 interface CACompleteOptions {
     rootElement: HTMLInputElement; /// The HTML Input element to use as the anchor.
@@ -69,10 +66,7 @@ interface CACompleteOptions {
     itemClass?: string; /// css class to style items in the list.
 }
 ```
-
-
 ### Contributing
-
 - `git clone https://github.com/bradmartin/cache-autocomplete.git`
 - `npm install` - install deps
 - `npm run dev` - will transpile and kick off the webpack dev server
