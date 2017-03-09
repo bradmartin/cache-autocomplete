@@ -3,7 +3,7 @@
 # Cache-AutoComplete
 #### Probably not what you're looking for, but it works for me :stuck_out_tongue: :poop:
 
-### Minified = *15.3b*  .min gzipped = *5.38kb*
+### File size = *15.3kb* - gzipped = *5.38kb*
 
 ![CacheAutoComplete](screens/cacheAutoComplete.gif)
 

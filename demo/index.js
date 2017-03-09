@@ -6,7 +6,7 @@ document.addEventListener("readystatechange", () => {
     var rootInput = document.getElementById("autoThis");
     cacheautocomplete.create({
       rootElement: rootInput,
-      queryUrl: `https://api.nastek.com/api/customer/typeahead?name={{ value }}&apikey=324`,
+      queryUrl: `https://api.demo.com/api/customer/typeahead?name={{ value }}&apikey=324`,
       itemTemplate: `<p>{{ CST_Name }} - {{ CST_Code }}</p>`,
       templateKeys: ["CST_Name", "CST_Code"],
       onItemSelect: function(selectedItem) {
