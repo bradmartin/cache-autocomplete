@@ -1,7 +1,7 @@
 The MIT License (MIT) - do whatever you want with this - just don't be a bitch about it.
 
 cache-autocomplete
-Copyright (c) 2016, Brad Martin
+Copyright (c) 2017, Brad Martin
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of
 this software and associated documentation files (the "Software"), to deal in
