@@ -18,5 +18,4 @@ tsconfig.json
 src/
 node_modules/
 README.md
-server.js
 webpack.config.js

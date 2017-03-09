@@ -2,15 +2,21 @@
     "compilerOptions": {
         "target": "es5",
         "module": "commonjs",
-        "removeComments": true,
+        "removeComments": false,
         "experimentalDecorators": true,
         "declaration": true,
         "sourceMap": true,
+        "noEmitOnError": false,
         "lib": [
-            "es2015",
+            "es5",
             "dom"
-        ]
+        ],
+        "baseUrl": "./"
     },
+    "exclude": [
+        "node_modules",
+        "dist"
+    ],
     "files": [
         "src/cacheautocomplete.ts"
     ],

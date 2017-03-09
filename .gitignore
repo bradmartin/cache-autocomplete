@@ -1,16 +1,12 @@
 *.js
 !demo/*.js
 !dist/*.js
-!server.js
 !webpack.config.js
 *.js.map
 *.log
 *.d.ts
 !cacheautocomplete.d.ts
-demo/lib
 demo/*.d.ts
-demo/platforms
 demo/node_modules
-demo/.vscode
 node_modules
 .vscode/
