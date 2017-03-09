@@ -47,7 +47,7 @@ cacheautocomplete.create(autoCompleteOptions);
 <input id="myAutoComplete" type="text" />
 ```
 
-#### ublic Methods
+### Public Methods
 - `create(opts: CACompleteOptions)` - create a cache autocomplete using the options object.
 - `clearCache(url?: string)` - If a url is specified only that url is removed from storage.
 If no url is specified all CacheAutoComplete items are removed from storage.
