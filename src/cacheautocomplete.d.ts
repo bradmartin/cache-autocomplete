@@ -9,6 +9,7 @@ export interface CACompleteOptions {
     rootElement: HTMLInputElement;
     queryUrl: string;
     itemTemplate: string;
+    templateKeys: string[];
     cache?: boolean;
     minStringLength?: number;
     listClass?: string;

@@ -1,7 +1,9 @@
+import { style } from 'typestyle';
 let rootElement: HTMLInputElement
 let popup: HTMLDivElement
 let list: HTMLUListElement
 let items: any[] = []
+let templateKeys = [];
 let cache: boolean = true
 let queryUrl: string
 let onItemSelect: Function
@@ -10,6 +12,7 @@ export function create(opts: CACompleteOptions): void {
     rootElement = opts.rootElement
     cache = opts.cache ? opts.cache : true
     onItemSelect = opts.onItemSelect
+    templateKeys = opts.templateKeys;
     list = document.createElement("ul") as HTMLUListElement
 
     rootElement.addEventListener("keydown", (ev) => {
@@ -22,8 +25,7 @@ export function create(opts: CACompleteOptions): void {
         }
         /// DOWN ARROW press - if in the focused input move the focus to the first item
         if (ev.keyCode === 40 && items.length > 0) {
-            ev.preventDefault()
-            /// prevent scrolling of the list
+            ev.preventDefault() /// prevent scrolling of the list
             const x = list.childNodes[0] as HTMLLIElement;
             x.focus()
         }
@@ -34,12 +36,12 @@ export function create(opts: CACompleteOptions): void {
         let trgt = (ev.target) as HTMLInputElement
         /// if the input is empty go ahead and close the suggestion list
         if (trgt.value === "") {
-            // deleteItems()
+            deleteItems()
             removePopup()
             return
         }
 
-        const stringLength = opts.minStringLength ? opts.minStringLength : 2
+        const stringLength = opts.minStringLength ? opts.minStringLength : 1
         if (trgt.value.trim().length >= stringLength) {
             queryUrl = opts.queryUrl.replace(`{{ value }}`, encodeURIComponent(rootElement.value))
             get(queryUrl, false).then((data) => {
@@ -83,16 +85,16 @@ export function clearCache(url?: string): void {
     }
 }
 
-
+/**
+ * Reusable function for the event listeners to clear the popup/list
+ * @param ev 
+ */
 function trashEventListener(ev: KeyboardEvent) {
-    console.log(ev)
     if (items.length > 0) {
         deleteItems()
         removePopup()
     }
 }
-
-
 
 /**
  * Query a url using the AutoComplete instance
@@ -144,25 +146,6 @@ function get(url: string, bustCache: boolean = false): Promise<any> {
     })
 }
 
-
-
-function occurrences(string, substring) {
-    let n = 0
-    let pos = 0
-    let l = substring.length
-
-    while (true) {
-        pos = string.indexOf(substring, pos)
-        if (pos != -1) {
-            n++
-            pos += l
-        } else {
-            break
-        }
-    }
-    return (n)
-}
-
 /**
  * Set the items for the AutoComplete
  * @param {Array} data - the array of objects for the list of options.
@@ -170,58 +153,52 @@ function occurrences(string, substring) {
  */
 function setItems(data: any[], itemTemplate: string, listClass?: string, itemClass?: string, noMatchesFound: boolean = false): void {
     /// parse the itemTemplate
-    var n = occurrences(itemTemplate, "{{")
-    console.log(n)
-
-
-
     let i = 0
     for (i; i < data.length; i++) {
         let li = document.createElement("li") as HTMLLIElement
-        li.id = data.indexOf(data[i]).toString()
+        li.id = i.toString()
         li.tabIndex = 0
-        // li.innerHTML =  `${data[i][itemValue]}`;
+        li.setAttribute("cacheautocomplete-id", i.toString())
 
-        /// NEED TO REPLATE THE KEYS passed in the template bindings with the objects key props
-        // console.log(itemTemplate)
-
-        // let j = 0;
-        // for (j; j < itemTemplate.length; j++) {
-        //     const item = itemTemplate[j];
-        //     const x = itemTemplate.indexOf("{{");
-        //     const y = itemTemplate.indexOf("}}");
-        //     console.log(x);
-        //     console.log(y);
-
-        // }
-
-
-        // var x = itemTemplate.indexOf("{{");
-        // console.log(x);
-        // var y = itemTemplate.lastIndexOf("}}");
-        // console.log(y);
-        // var key = itemTemplate.slice(x + 2, y);
-        // console.log(key);
-        // var z = itemTemplate.replace(`{{${key}}}`, `${data[i][key]}`);
-        // console.log(z);
-
-        // li.innerHTML = z;
+        let originalTemplate = itemTemplate
+        let replacedKeyString
+        let j = 0
+        for (j; j < templateKeys.length; j++) {
+            let key = templateKeys[j]
+            originalTemplate = originalTemplate.replace(`{{ ${key} }}`, `${data[i][key]}`)
+            replacedKeyString = originalTemplate
+            if (j === templateKeys.length - 1) {
+                li.innerHTML = replacedKeyString
+                break
+            }
+        }
 
         // default style or custom item class
         if (itemClass) {
             li.classList.add(itemClass)
         } else {
-            li.setAttribute("style", `
-            color: rgb(33, 33, 33); 
-            padding: 6px; 
-            cursor: pointer; 
-            text-overflow: ellipsis;
-            padding: 0 15px;
-            overflow: hidden;
-            white-space: nowrap;
-            transition: background .15s linear;
-            background: transparent;
-            `)
+            const styledItemClass = style({
+                color: 'rgb(33, 33, 33)',
+                cursor: 'pointer',
+                textOverflow: 'ellipsis',
+                height: 'auto',
+                padding: '0 15px',
+                overflow: 'hidden',
+                whiteSpace: 'nowrap',
+                background: 'transparent',
+                transition: 'background-color .15s linear',
+                $nest: {
+                    '&:hover': {
+                        backgroundColor: 'rgb(238,238,238)'
+                    },
+                    '&:focus': {
+                        outline: 'none',
+                        backgroundColor: '#eeeeee',
+                        color: '#444'
+                    }
+                }
+            })
+            li.classList.add(styledItemClass)
         }
 
         /// Only set event listeners if there are matching items. When we set `No Matches found` we pass a flag to skip this
@@ -257,7 +234,7 @@ function setItems(data: any[], itemTemplate: string, listClass?: string, itemCla
                     /// shift focus to the next list item
                     let pSib = li.previousSibling as Node;
                     if (pSib) {
-                        if (pSib.nodeName.toLowerCase() === "li") {
+                        if (pSib.nodeName === "LI") {
                             (pSib as HTMLLIElement).focus()
                         }
                     } else { /// move focus to the rootElement (input)
@@ -268,11 +245,12 @@ function setItems(data: any[], itemTemplate: string, listClass?: string, itemCla
 
             // add event listener to the <list> list and then parse the element and update the textboxes
             li.addEventListener("click", (ev: Event) => {
+                const autocompleteItemId = li.getAttribute("cacheautocomplete-id")
                 let trgt = ev.target as HTMLLIElement
-                if (trgt && trgt.nodeName.toLowerCase() === "li") {
+                if (trgt && autocompleteItemId) {
                     // get id of the clicked <li> and map to the data array
-                    let item: any[] = data[parseInt(trgt.id, 10)]
-                    // deleteItems();
+                    let item = data[parseInt(autocompleteItemId, 10)]
+                    deleteItems();
                     removePopup()
                     if (onItemSelect) {
                         onItemSelect(item)
@@ -280,13 +258,14 @@ function setItems(data: any[], itemTemplate: string, listClass?: string, itemCla
                 }
             })
         }
+
         /// push to the items prop - if not worth having, remove in update
         items.push(li)
         list.appendChild(li)
     }
 
     /// Set the styles for the list
-    list.setAttribute("style", "list-style: none; padding: 0; margin: 0;")
+    list.setAttribute("style", "list-style: none; padding: 0; margin: 0; max-height: 300px")
 
     /// get coords of the doc.body
     const bodyRect: ClientRect = document.body.getBoundingClientRect()
@@ -302,25 +281,25 @@ function setItems(data: any[], itemTemplate: string, listClass?: string, itemCla
     if (listClass) {
         popup.classList.add(listClass)
     } else {
-        popup.setAttribute("style", `
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #fff;
-            border-radius: 0;
-            box-shadow: 0 1px 3px 0 rgba(0,0,0,.2), 0 1px 1px 0 rgba(0,0,0,.14), 0 2px 1px -1px rgba(0,0,0,.12);
-        `)
+        const styledListClass = style({
+            fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
+            backgroundColor: '#fff',
+            borderRadius: '0',
+            boxShadow: '0 1px 3px 0 rgba(0,0,0,.2), 0 1px 1px 0 rgba(0, 0, 0, .14), 0 2px 1px -1px rgba(0, 0, 0, .12)',
+        })
+        popup.classList.add(styledListClass)
     }
 
-    const currentStyles = popup.getAttribute("style").valueOf()
-    popup.setAttribute("style", `
-    ${currentStyles}
-    position: absolute;
-    top: ${top.toString()};
-    left: ${left.toString()};
-    zIndex: "999999999";
-    overflowY: "auto";
-    maxHeight: "300px";
-    width: ${rootElement.clientWidth.toString()}px;
-    `)
+    const defaultPopupStylePositioning = style({
+        position: 'absolute',
+        top: `${Math.round(top).toString()}`,
+        left: `${Math.round(left).toString()}`,
+        zIndex: 9999999,
+        overflowY: 'auto',
+        maxHeight: '300px',
+        width: `${rootElement.clientWidth.toString()}px`
+    })
+    popup.classList.add(defaultPopupStylePositioning)
 
     popup.appendChild(list)
 
@@ -363,7 +342,7 @@ function removePopup(): void {
  */
 function cacheIt(url: string, data: any): void {
     if (localStorage) {
-        localStorage.setItem(`CAC- ${url}`, JSON.stringify(data))
+        localStorage.setItem(`CAC-${url}`, JSON.stringify(data))
     }
 }
 
@@ -390,6 +369,7 @@ export interface CACompleteOptions {
     rootElement: HTMLInputElement;
     queryUrl: string;
     itemTemplate: string;
+    templateKeys: string[];
     cache?: boolean;
     minStringLength?: number;
     listClass?: string;

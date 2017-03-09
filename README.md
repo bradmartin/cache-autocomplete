@@ -3,8 +3,7 @@
 # Cache-AutoComplete
 #### Probably not what you're looking for, but it works for me :stuck_out_tongue: :poop:
 
-### Minified = 3.71kb 
-### .min gzipped = 1.57kb
+### Minified = *15.3b*  .min gzipped = *5.38kb*
 
 ![CacheAutoComplete](screens/cacheAutoComplete.gif)
 
@@ -28,7 +27,7 @@ var CACompleteOptions = {
             rootElement: rootInput, // required - the dom element to tie into
             queryUrl: 'https://api.test.com/api/customer/typeahead?name={{ value }}&apikey=84', // required and must use the `{{ value }}` to inject the rootElement's current value when typing
             itemTemplate: '<p> {{ Name }} </p>', // required
-            minStringLength: 1, // default is 2
+            minStringLength: 2, // default is 1
             cache: false, // default is true
             listClass: 'listClass', // optional
             itemClass: 'itemClass', // optional
@@ -60,7 +59,7 @@ interface CACompleteOptions {
     queryUrl: string; /// The URL to ping for remote data.
     itemTemplate: any; /// The response data Key property to display
     onItemSelect: Function; /// callback function when a list item is selected via keyboard or mouse - this is optional but you likely need to use it and set the rootInput value to some prop in your list objects
-    minStringLength?: number; /// optional - default is 2
+    minStringLength?: number; /// optional - default is 1
     cache?: boolean; /// optional - default is true
     listClass?: string; /// css class to style the list
     itemClass?: string; /// css class to style items in the list.
