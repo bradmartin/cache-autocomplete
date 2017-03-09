@@ -67,6 +67,12 @@ interface CACompleteOptions {
     cache?: boolean; /// optional - default is true
     listClass?: string; /// css class to style the list
     itemClass?: string; /// css class to style items in the list.
-    onItemsCleared?: Function; /// callback when the items list is cleared
 }
 ```
+
+
+### Contributing
+
+- `git clone https://github.com/bradmartin/cache-autocomplete.git`
+- `npm install` - install deps
+- `npm run dev` - will transpile and kick off the webpack dev server
