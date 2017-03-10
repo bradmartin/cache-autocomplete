@@ -223,7 +223,7 @@ export class AutoComplete {
                     cursor: pointer;
                     text-overflow: ellipsis;
                     height: auto;
-                    padding: 0 15px;
+                    padding: 5px 12px 5px 12px;
                     overflow: hidden;
                     white-space: nowrap;
                     background: transparent;
