@@ -4,17 +4,20 @@
     body {
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
+    
     #autoThis {
         width: 50%;
     }
+    
     .listClass {
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         background-color: #fff;
         border-radius: 0;
-        box-shadow: 0 1px 3px 0 rgba(0,0,0,.2), 0 1px 1px 0 rgba(0,0,0,.14), 0 2px 1px -1px rgba(0,0,0,.12);
+        box-shadow: 0 1px 3px 0 rgba(0, 0, 0, .2), 0 1px 1px 0 rgba(0, 0, 0, .14), 0 2px 1px -1px rgba(0, 0, 0, .12);
     }
+    
     .itemClass {
-        color: rgb(33,33,33);
+        color: rgb(33, 33, 33);
         padding: 6px;
         cursor: pointer;
         text-overflow: ellipsis;
@@ -26,16 +29,17 @@
         transition: background .15s linear;
         background: transparent;
     }
+    
     .itemClass:hover {
-        background-color: rgb(238,238,238);
+        background-color: rgb(238, 238, 238);
     }
-
+    
     .itemClass:focus {
         outline: none;
         background-color: #EEEEEE;
         color: #444;
     }
-    </style>
+</style>
 
 <head>
     <meta charset="UTF-8">
@@ -46,6 +50,9 @@
     <h3>Cache AutoComplete</h3>
     <input type="text" id="autoThis" />
     <button type="button" onclick="clearTheCache()">Clear Cache</button>
+
+    <input type="text" id="autoTwo" />
+    <button type="button" onclick="getTheComponent()">Log Component</button>
 </body>
 
 <script src="../dist/cacheautocomplete.js"></script>

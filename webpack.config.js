@@ -1,5 +1,6 @@
 var webpack = require("webpack");
 var path = require("path");
+const UglifyJSPlugin = require("uglifyjs-webpack-plugin");
 
 var config = {
   entry: __dirname + "/src/cacheautocomplete.ts",
@@ -9,7 +10,7 @@ var config = {
     filename: "cacheautocomplete.js",
     library: "cacheautocomplete",
     libraryTarget: "umd",
-    umdNamedDefine: true
+    // umdNamedDefine: true
   },
 
   //// Currently we need to add '.ts' to the resolve.extensions array.
@@ -24,14 +25,22 @@ var config = {
       }
     ]
   },
-  plugins: [new webpack.HotModuleReplacementPlugin()],
+  plugins: [
+    // new webpack.HotModuleReplacementPlugin(),
+    // new webpack.optimize.UglifyJsPlugin({
+    //   compress: {
+    //     warnings: false,
+    //     drop_console: true
+    //   }
+    // })
+  ],
   devServer: {
     contentBase: path.join(__dirname, "demo"),
     compress: true,
     port: 9000,
     hot: true,
     overlay: true,
-    publicPath: '/dist/' /* '/dist/' */
+    publicPath: "/dist/" /* '/dist/' */
   }
 };
 

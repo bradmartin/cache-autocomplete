@@ -1,6 +1,6 @@
 {
   "name": "cache-autocomplete",
-  "version": "3.0.0",
+  "version": "4.0.0",
   "description": "JS component for autocomplete with caching.",
   "main": "dist/cacheautocomplete",
   "typings": "cacheautocomplete.d.ts",
@@ -30,7 +30,7 @@
     "typescript": "^2.2.1",
     "typestyle": "^1.2.0",
     "uglify-js": "^2.7.5",
-    "uglifyjs-webpack-plugin": "^0.2.1",
+    "uglifyjs-webpack-plugin": "^0.3.0",
     "webpack": "^2.2.1",
     "webpack-dev-server": "^2.4.1"
   }

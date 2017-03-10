@@ -31,13 +31,13 @@ var CACompleteOptions = {
             cache: false, // default is true
             listClass: 'listClass', // optional
             itemClass: 'itemClass', // optional
-            onItemSelect: function (selectedItem) { // optional - callback when an item is selected via keyboard or mouse event
+            itemSelect: function (selectedItem) { // optional - callback when an item is selected via keyboard or mouse event
                 console.log(selectedItem);
                 rootInput.value = selectedItem.SomeProp;
             }
         };
 
-cacheautocomplete.create(autoCompleteOptions);
+var CAC = new cacheautocomplete.AutoComplete(autoCompleteOptions);
 
 ```
 
@@ -47,7 +47,6 @@ cacheautocomplete.create(autoCompleteOptions);
 ```
 
 ### Public Methods
-- `create(opts: CACompleteOptions)` - create a cache autocomplete using the options object.
 - `clearCache(url?: string)` - If a url is specified only that url is removed from storage.
 If no url is specified all CacheAutoComplete items are removed from storage.
 
@@ -58,7 +57,8 @@ interface CACompleteOptions {
     rootElement: HTMLInputElement; /// The HTML Input element to use as the anchor.
     queryUrl: string; /// The URL to ping for remote data.
     itemTemplate: any; /// The response data Key property to display
-    onItemSelect: Function; /// callback function when a list item is selected via keyboard or mouse - this is optional but you likely need to use it and set the rootInput value to some prop in your list objects
+    templateKeys: string[];
+    itemSelect: Function; /// callback function when a list item is selected via keyboard or mouse - this is optional but you likely need to use it and set the rootInput value to some prop in your list objects
     minStringLength?: number; /// optional - default is 1
     cache?: boolean; /// optional - default is true
     listClass?: string; /// css class to style the list
