@@ -3,7 +3,7 @@
 # Cache-AutoComplete
 #### Probably not what you're looking for, but it works for me :stuck_out_tongue: :poop:
 
-### File size = *15.3kb* - gzipped = *5.38kb*
+### File size = *7.21kb* - gzipped = *2.48kb*
 
 ![CacheAutoComplete](screens/cacheAutoComplete.gif)
 
@@ -24,7 +24,7 @@ Just want to keep this light weight :smile:
 ```js
 var rootInput = document.getElementById("myAutoComplete");
 var CAC = new cacheautocomplete.AutoComplete({
-            rootElement: rootInput, // required - the dom element to tie into
+            element: rootInput, // required - the dom element to tie into
             queryUrl: 'https://api.test.com/api/customer/typeahead?name={{ value }}&apikey=84', // required and must use the `{{ value }}` to inject the rootElement's current value when typing
             itemTemplate: '<div> <h3>{{ Name }}</h3> <img src="{{ ProfilePic }} /> </div>', // required
             templateKeys: ['Name', 'ProfilePic']
@@ -49,12 +49,12 @@ If no url is specified all CacheAutoComplete items are removed from storage.
 ### CacheAutoCompleteOptions 
 ```ts
 interface CACompleteOptions {
-    rootElement: HTMLInputElement; /// The HTML Input element to use as the anchor.
+    element: HTMLInputElement; /// The HTML Input element to use as the anchor.
     queryUrl: string; /// The URL to ping for remote data.
     itemTemplate: any; /// The response data Key property to display
     templateKeys: string[]; // The keys are used to create the correct template for the items. See example for correct usage.
     itemSelectCallback: Function; /// callback function when a list item is selected via keyboard or mouse - this is optional but you likely need to use it and set the rootInput value to some prop in your list objects
-    minStringLength?: number; /// optional - default is 1
+    minLength?: number; /// optional - default is 1
     cache?: boolean; /// optional - default is true
     listClass?: string; /// css class to style the list
     itemClass?: string; /// css class to style items in the list.
