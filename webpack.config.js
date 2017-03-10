@@ -1,12 +1,9 @@
 const webpack = require("webpack");
 const path = require("path");
 const UglifyJSPlugin = require("uglifyjs-webpack-plugin");
-const minimize = process.argv.indexOf("--minimize");
-console.log("minimize: " + minimize);
 
 const config = {
   entry: __dirname + "/src/cacheautocomplete.ts",
-  devtool: "source-map",
   output: {
     path: __dirname + "/dist",
     filename: "cacheautocomplete.js",
@@ -29,15 +26,9 @@ const config = {
   },
 
   plugins: [
-    new webpack.optimize.UglifyJsPlugin({
-      compress: {
-        warnings: false,
-        drop_console: true
-      }
-    }),
-    // new webpack.HotModuleReplacementPlugin()
+    new webpack.optimize.UglifyJsPlugin(),
+    new webpack.HotModuleReplacementPlugin()
   ],
-
   devServer: {
     contentBase: path.join(__dirname, "demo"),
     compress: true,

@@ -6,7 +6,7 @@ document.addEventListener("readystatechange", () => {
     var rootInput = document.getElementById("autoThis");
     inputOne = new cacheautocomplete.AutoComplete({
       element: rootInput,
-      queryUrl: `https://api.nastek.com/api/customer/typeahead?name={{ value }}&apikey=1`,
+      queryUrl: `https://api.demo.com/api/customer/typeahead?name={{ value }}&apikey=1`,
       itemTemplate: `<p>{{ CST_Name }} - {{ CST_Code }}</p>`,
       templateKeys: ["CST_Name", "CST_Code"],
       itemSelectCallback: function(selectedItem) {
@@ -19,7 +19,7 @@ document.addEventListener("readystatechange", () => {
     var rootInput2 = document.getElementById("autoTwo");
     var y = new cacheautocomplete.AutoComplete({
       element: rootInput2,
-      queryUrl: `https://api.nastek.com/api/shipper/typeahead?name={{ value }}&apikey=1`,
+      queryUrl: `https://api.demo.com/api/shipper/typeahead?name={{ value }}&apikey=1`,
       itemTemplate: `<p>{{ CST_Name }} - {{ CST_Code }}</p>`,
       templateKeys: ["CST_Name", "CST_Code"],
       itemClass: "customItemClass",

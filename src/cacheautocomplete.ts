@@ -29,37 +29,6 @@ export class AutoComplete {
         this.createComponent();
     }
 
-    private addItemStyle() {
-        if (!this.itemClass && !this.hasListStyleClass()) {
-            let iClass = document.createElement("style") as HTMLStyleElement
-            iClass.id = `${this.LI_CLASS}`
-            iClass.type = 'text/css'
-            iClass.innerHTML = `.${this.LI_CLASS} {
-                    color: rgb(33, 33, 33);
-                    cursor: pointer;
-                    text-overflow: ellipsis;
-                    height: auto;
-                    padding: 0 15px;
-                    overflow: hidden;
-                    white-space: nowrap;
-                    background: transparent;
-                    transition: background-color .15s linear;
-                }
-               .${this.LI_CLASS}:hover {
-                    background-color: rgb(238,238,238);
-                }
-                .${this.LI_CLASS}:focus {
-                    outline: none;
-                    background-color: #eeeeee;
-                    color: #444;
-                }
-        }`
-            console.log(iClass)
-            // this.POPUP.appendChild(iClass);
-            document.head.appendChild(iClass)
-        }
-    }
-
     /**
       * Delete a single key (url) from storage or all CacheAutoComplete keys.
       * If no url is passed as an argument, all keys and data will be removed from storage.
@@ -79,6 +48,10 @@ export class AutoComplete {
     }
 
     private createComponent() {
+        this.elementEventListeners();
+    }
+
+    private elementEventListeners() {
         // this.LIST = document.createElement("ul") as HTMLUListElement
         this.element.addEventListener("keydown", (ev) => {
             /// if TAB press send focus to list - this is handled natively by browsers with most layouts
@@ -109,10 +82,6 @@ export class AutoComplete {
                             data = JSON.parse(data)
                         }
                         this.setItems(data, this.itemTemplate)
-                        // document.addEventListener("click", (ev) => {
-                        //     this.deleteItems();
-                        //     this.removePopup();
-                        // });
                         document.addEventListener("click", this.destroy);
                         window.addEventListener("resize", this.destroy)
                     }
@@ -125,7 +94,6 @@ export class AutoComplete {
                 })
             }
         })
-        // return this;
     }
 
     /**
@@ -139,8 +107,7 @@ export class AutoComplete {
             for (let i = localStorage.length; i--;) {
                 let key = localStorage.key(i) as string;
                 if (key.lastIndexOf("CAC", 0) === 0) {
-                    let keyMatchUrl = key.indexOf(url) > -1 as boolean;
-                    if (keyMatchUrl === true) {
+                    if (key.indexOf(url) > -1 === true) {
                         isUrlCached = true
                     }
                 }
@@ -245,6 +212,36 @@ export class AutoComplete {
         }
     }
 
+
+    private addItemStyle() {
+        if (!this.itemClass && !this.hasListStyleClass()) {
+            let iClass = document.createElement("style") as HTMLStyleElement
+            iClass.id = `${this.LI_CLASS}`
+            iClass.type = 'text/css'
+            iClass.innerHTML = `.${this.LI_CLASS} {
+                    color: rgb(33, 33, 33);
+                    cursor: pointer;
+                    text-overflow: ellipsis;
+                    height: auto;
+                    padding: 0 15px;
+                    overflow: hidden;
+                    white-space: nowrap;
+                    background: transparent;
+                    transition: background-color .15s linear;
+                }
+               .${this.LI_CLASS}:hover {
+                    background-color: rgb(238,238,238);
+                }
+                .${this.LI_CLASS}:focus {
+                    outline: none;
+                    background-color: #eeeeee;
+                    color: #444;
+                }
+        }`
+            document.head.appendChild(iClass)
+        }
+    }
+
     /**
      * Checks whether the Document has the default item class
      */
@@ -256,14 +253,15 @@ export class AutoComplete {
      * Style the popup div
      */
     private stylePopup() {
-        /// Set the styles for the list
         this.LIST.setAttribute("style", "list-style: none; padding: 0; margin: 0; max-height: 300px")
 
-        /// get coords of the doc.body
+        /// get coords of the doc.body for positioning in the document.body
+        /// use this approach for the many use cases of an input (modals and shit layouts)
         const bodyRect: ClientRect = document.body.getBoundingClientRect()
         const rect: ClientRect = this.element.getBoundingClientRect()
-        const top: number = rect.top - bodyRect.top + (this.element.offsetHeight * 2)
+        const top: number = rect.top - bodyRect.top + this.element.clientHeight
         const left: number = rect.left
+
 
         /// set popup list styles
         if (this.listClass) {
@@ -306,7 +304,6 @@ export class AutoComplete {
             /// DOWN ARROW press
             if (ev.keyCode === 40 && this.items.length > 0) {
                 ev.preventDefault()
-                const nSib = li.nextSibling
                 if (li.nextSibling && li.nextSibling.nodeName === "LI") {
                     (li.nextSibling as HTMLLIElement).focus()
                 } else {
@@ -330,8 +327,7 @@ export class AutoComplete {
         // add event listener to the <list> list and then parse the element and update the textboxes
         li.addEventListener("click", (ev: Event) => {
             const autocompleteItemId = li.getAttribute("cacheautocomplete-id")
-            const trgt = ev.target as HTMLLIElement
-            if (trgt && autocompleteItemId) {
+            if (ev.target && autocompleteItemId) {
                 // get id of the clicked <li> and map to the data array
                 let item = data[parseInt(autocompleteItemId, 10)]
                 this.deleteItems();

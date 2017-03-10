@@ -13,7 +13,6 @@ export declare class AutoComplete {
     private LIST;
     private LI_CLASS;
     constructor(opts: CACompleteOptions);
-    private addItemStyle();
     /**
       * Delete a single key (url) from storage or all CacheAutoComplete keys.
       * If no url is passed as an argument, all keys and data will be removed from storage.
@@ -21,6 +20,7 @@ export declare class AutoComplete {
       */
     static clearCache(url?: string): void;
     private createComponent();
+    private elementEventListeners();
     /**
      * Query a url using the AutoComplete instance
      * @param {string} url - the url to query.
@@ -39,6 +39,7 @@ export declare class AutoComplete {
      * @param li
      */
     private styleListItem(li);
+    private addItemStyle();
     /**
      * Checks whether the Document has the default item class
      */
