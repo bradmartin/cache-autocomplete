@@ -9,32 +9,30 @@
         width: 50%;
     }
     
-    .listClass {
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        background-color: #fff;
-        border-radius: 0;
-        box-shadow: 0 1px 3px 0 rgba(0, 0, 0, .2), 0 1px 1px 0 rgba(0, 0, 0, .14), 0 2px 1px -1px rgba(0, 0, 0, .12);
+    .customListClass {
+        font-family: cursive, fantasy;
+        background-color: #444;
+        border-radius: 3px;
+        border: solid 1px #dedede;
     }
     
-    .itemClass {
-        color: rgb(33, 33, 33);
-        padding: 6px;
+    .customItemClass {
+        color: #f1f1f1;
         cursor: pointer;
         text-overflow: ellipsis;
-        height: 48px;
-        line-height: 48px;
-        padding: 0 15px;
+        padding: 0 10px;
         overflow: hidden;
         white-space: nowrap;
-        transition: background .15s linear;
+        transition: background .2s linear;
         background: transparent;
     }
     
-    .itemClass:hover {
+    .customItemClass:hover {
         background-color: rgb(238, 238, 238);
+        color: #555;
     }
     
-    .itemClass:focus {
+    .customItemClass:focus {
         outline: none;
         background-color: #EEEEEE;
         color: #444;

@@ -3,22 +3,23 @@ export declare class AutoComplete {
     itemClass: string;
     listClass: string;
     queryUrl: string;
-    rootElement: HTMLInputElement;
+    element: HTMLInputElement;
     cache: boolean;
     itemTemplate: string;
     templateKeys: any[];
-    itemSelect: any;
-    minStringLength: number;
-    private _POPUP;
-    private _LIST;
+    itemSelectCallback: any;
+    minLength: number;
+    private POPUP;
+    private LIST;
+    private LI_CLASS;
     constructor(opts: CACompleteOptions);
+    private addItemStyle();
     /**
       * Delete a single key (url) from storage or all CacheAutoComplete keys.
       * If no url is passed as an argument, all keys and data will be removed from storage.
       * @param {string} [url] - The url to delete from storage.
       */
     static clearCache(url?: string): void;
-    private static test();
     private createComponent();
     /**
      * Query a url using the AutoComplete instance
@@ -33,8 +34,24 @@ export declare class AutoComplete {
      */
     private setItems(data, itemTemplate, noMatchesFound?);
     private createListItems(data, itemTemplate, noMatchesFound);
+    /**
+     * Style the list item using the options.itemClass - or default to component defaults
+     * @param li
+     */
     private styleListItem(li);
+    /**
+     * Checks whether the Document has the default item class
+     */
+    private hasListStyleClass();
+    /**
+     * Style the popup div
+     */
     private stylePopup();
+    /**
+     * Setup the event listeners for keyboard/mouse events on the list items
+     * @param li
+     * @param data
+     */
     private setupListItemEventListeners(li, data);
     /**
      * Remove the list items from the list.
@@ -61,13 +78,13 @@ export declare class AutoComplete {
     private destroy;
 }
 export interface CACompleteOptions {
-    rootElement: HTMLInputElement;
+    element: HTMLInputElement;
     queryUrl: string;
     itemTemplate: string;
     templateKeys: string[];
     cache?: boolean;
-    minStringLength?: number;
+    minLength?: number;
     listClass?: string;
     itemClass?: string;
-    itemSelect?: Function;
+    itemSelectCallback?: Function;
 }

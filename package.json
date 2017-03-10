@@ -1,6 +1,6 @@
 {
   "name": "cache-autocomplete",
-  "version": "4.0.0",
+  "version": "4.1.0",
   "description": "JS component for autocomplete with caching.",
   "main": "dist/cacheautocomplete",
   "typings": "cacheautocomplete.d.ts",
@@ -11,7 +11,7 @@
   "scripts": {
     "clean-dist": "rimraf dist",
     "dev": "node_modules/.bin/webpack-dev-server",
-    "build": "webpack --progress --colors -p"
+    "build": "webpack  --progress --colors -p"
   },
   "keywords": [
     "TypeScript",
@@ -29,7 +29,7 @@
     "awesome-typescript-loader": "^3.1.2",
     "typescript": "^2.2.1",
     "typestyle": "^1.2.0",
-    "uglify-js": "^2.7.5",
+    "uglify-js": "^2.8.11",
     "uglifyjs-webpack-plugin": "^0.3.0",
     "webpack": "^2.2.1",
     "webpack-dev-server": "^2.4.1"

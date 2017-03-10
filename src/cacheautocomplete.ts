@@ -1,35 +1,63 @@
-import { style } from 'typestyle';
-
 export class AutoComplete {
     public items: any[];
     public itemClass: string;
     public listClass: string;
     public queryUrl: string;
-    public rootElement: HTMLInputElement
+    public element: HTMLInputElement
     public cache: boolean;
     public itemTemplate: string;
     public templateKeys: any[];
-    public itemSelect: any;
-    public minStringLength: number;
-    // public static itemSelect: Function;
-    private _POPUP: HTMLDivElement;
-    private _LIST: HTMLUListElement;
-    // private _ITEMSELECT: Function;
+    public itemSelectCallback: any;
+    public minLength: number;
+    private POPUP: HTMLDivElement;
+    private LIST: HTMLUListElement;
+    private LI_CLASS: string = "CacheAutoCompleteItem";
 
     constructor(opts: CACompleteOptions) {
-        this.rootElement = opts.rootElement;
+        this.element = opts.element;
         this.queryUrl = opts.queryUrl;
         this.itemTemplate = opts.itemTemplate;
         this.templateKeys = opts.templateKeys;
         this.items = [];
         this.cache = opts.cache ? opts.cache : true
-        this.minStringLength = opts.minStringLength ? opts.minStringLength : 1;
+        this.minLength = opts.minLength ? opts.minLength : 1;
         this.itemClass = opts.itemClass;
         this.listClass = opts.listClass;
-        this._POPUP = document.createElement("div") as HTMLDivElement;
-        this._LIST = document.createElement("ul") as HTMLUListElement;
-        this.itemSelect = opts.itemSelect;
+        this.POPUP = document.createElement("div") as HTMLDivElement;
+        this.LIST = document.createElement("ul") as HTMLUListElement;
+        this.itemSelectCallback = opts.itemSelectCallback;
         this.createComponent();
+    }
+
+    private addItemStyle() {
+        if (!this.itemClass && !this.hasListStyleClass()) {
+            let iClass = document.createElement("style") as HTMLStyleElement
+            iClass.id = `${this.LI_CLASS}`
+            iClass.type = 'text/css'
+            iClass.innerHTML = `.${this.LI_CLASS} {
+                    color: rgb(33, 33, 33);
+                    cursor: pointer;
+                    text-overflow: ellipsis;
+                    height: auto;
+                    padding: 0 15px;
+                    overflow: hidden;
+                    white-space: nowrap;
+                    background: transparent;
+                    transition: background-color .15s linear;
+                }
+               .${this.LI_CLASS}:hover {
+                    background-color: rgb(238,238,238);
+                }
+                .${this.LI_CLASS}:focus {
+                    outline: none;
+                    background-color: #eeeeee;
+                    color: #444;
+                }
+        }`
+            console.log(iClass)
+            // this.POPUP.appendChild(iClass);
+            document.head.appendChild(iClass)
+        }
     }
 
     /**
@@ -50,24 +78,20 @@ export class AutoComplete {
         }
     }
 
-    private static test() {
-        console.log('test');
-    }
-
     private createComponent() {
-        // this._LIST = document.createElement("ul") as HTMLUListElement
-        this.rootElement.addEventListener("keydown", (ev) => {
+        // this.LIST = document.createElement("ul") as HTMLUListElement
+        this.element.addEventListener("keydown", (ev) => {
             /// if TAB press send focus to list - this is handled natively by browsers with most layouts
             /// However, some weird layouts might have shitty layout/tabIndex order so this will improve the awesomeness.
             /// DOWN ARROW press - if in the focused input move the focus to the first item
             if (ev.keyCode === 9 || ev.keyCode === 40 && this.items.length > 0) {
                 ev.preventDefault();
-                (this._LIST.childNodes[0] as HTMLLIElement).focus();
+                (this.LIST.childNodes[0] as HTMLLIElement).focus();
             }
         })
 
         /// Add keyup event listener to trigger the GET request
-        this.rootElement.addEventListener("keyup", (ev: KeyboardEvent) => {
+        this.element.addEventListener("keyup", (ev: KeyboardEvent) => {
             const trgt = ev.target as HTMLInputElement
             /// if the input is empty go ahead and close the suggestion list
             if (trgt.value === "") {
@@ -76,8 +100,8 @@ export class AutoComplete {
                 return
             }
 
-            if (trgt.value.trim().length >= this.minStringLength) {
-                const url = this.queryUrl.replace(`{{ value }}`, encodeURIComponent(this.rootElement.value))
+            if (trgt.value.trim().length >= this.minLength) {
+                const url = this.queryUrl.replace(`{{ value }}`, encodeURIComponent(this.element.value))
                 this.get(url, false).then((data) => {
                     this.deleteItems()
                     if (data) {
@@ -162,9 +186,9 @@ export class AutoComplete {
     private setItems(data: any[], itemTemplate, noMatchesFound: boolean = false): void {
         this.createListItems(data, itemTemplate, noMatchesFound)
         this.stylePopup()
-        this._POPUP.appendChild(this._LIST)
-        document.body.appendChild(this._POPUP)
-        this._LIST.focus()
+        this.POPUP.appendChild(this.LIST)
+        document.body.appendChild(this.POPUP)
+        this.LIST.focus()
     }
 
 
@@ -199,81 +223,84 @@ export class AutoComplete {
             }
             /// push to the items prop - if not worth having, remove in update
             this.items.push(li)
-            this._LIST.appendChild(li)
+            this.LIST.appendChild(li)
         }
     }
 
+    /**
+     * Style the list item using the options.itemClass - or default to component defaults
+     * @param li
+     */
     private styleListItem(li: HTMLLIElement) {
         // default style or custom item class
         if (this.itemClass) {
             li.classList.add(this.itemClass)
         } else {
-            const styledItemClass = style({
-                color: 'rgb(33, 33, 33)',
-                cursor: 'pointer',
-                textOverflow: 'ellipsis',
-                height: 'auto',
-                padding: '0 15px',
-                overflow: 'hidden',
-                whiteSpace: 'nowrap',
-                background: 'transparent',
-                transition: 'background-color .15s linear',
-                $nest: {
-                    '&:hover': {
-                        backgroundColor: 'rgb(238,238,238)'
-                    },
-                    '&:focus': {
-                        outline: 'none',
-                        backgroundColor: '#eeeeee',
-                        color: '#444'
-                    }
-                }
-            })
-            li.classList.add(styledItemClass)
+            if (this.hasListStyleClass()) {
+                li.classList.add(`${this.LI_CLASS}`)
+            } else {
+                this.addItemStyle();
+                li.classList.add(`${this.LI_CLASS}`);
+            }
         }
     }
 
+    /**
+     * Checks whether the Document has the default item class
+     */
+    private hasListStyleClass() {
+        return document.getElementById(`${this.LI_CLASS}`) ? true : false;
+    }
+
+    /**
+     * Style the popup div
+     */
     private stylePopup() {
         /// Set the styles for the list
-        this._LIST.setAttribute("style", "list-style: none; padding: 0; margin: 0; max-height: 300px")
+        this.LIST.setAttribute("style", "list-style: none; padding: 0; margin: 0; max-height: 300px")
 
         /// get coords of the doc.body
         const bodyRect: ClientRect = document.body.getBoundingClientRect()
-        const rect: ClientRect = this.rootElement.getBoundingClientRect()
-        const top: number = rect.top - bodyRect.top + this.rootElement.clientHeight
+        const rect: ClientRect = this.element.getBoundingClientRect()
+        const top: number = rect.top - bodyRect.top + (this.element.offsetHeight * 2)
         const left: number = rect.left
 
         /// set popup list styles
         if (this.listClass) {
-            this._POPUP.classList.add(this.listClass)
+            this.POPUP.classList.add(this.listClass)
         } else {
-            const styledListClass = style({
-                fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
-                backgroundColor: '#fff',
-                borderRadius: '0',
-                boxShadow: '0 1px 3px 0 rgba(0,0,0,.2), 0 1px 1px 0 rgba(0, 0, 0, .14), 0 2px 1px -1px rgba(0, 0, 0, .12)',
-            })
-            this._POPUP.classList.add(styledListClass)
+            this.POPUP.setAttribute("style", `
+                font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+                background-color: #FFF;
+                border-radius: 0 0 3px 3px;
+                box-shadow: 0 1px 3px 0 rgba(0,0,0,.2), 0 1px 1px 0 rgba(0, 0, 0, .14), 0 2px 1px -1px rgba(0, 0, 0, .12);
+            `)
         }
 
-        const defaultPopupStylePositioning = style({
-            position: 'absolute',
-            left: `${Math.round(left).toString()}px`,
-            zIndex: 9999999,
-            overflowY: 'auto',
-            maxHeight: '300px',
-            width: `${this.rootElement.clientWidth.toString()}px`
-        })
-        this._POPUP.classList.add(defaultPopupStylePositioning)
+        let originalStyleValue = this.POPUP.getAttribute("style") ? this.POPUP.getAttribute("style").valueOf() : "";
+        this.POPUP.setAttribute("style", `
+            ${originalStyleValue} position: absolute;
+            top: ${Math.round(top).toString()}px;
+            left: ${Math.round(left).toString()}px;
+            z-index: 9999999;
+            overflow-y: auto;
+            max-height: 300px;
+            width: ${this.element.clientWidth.toString()}px;
+        `)
     }
 
+    /**
+     * Setup the event listeners for keyboard/mouse events on the list items
+     * @param li 
+     * @param data 
+     */
     private setupListItemEventListeners(li: HTMLLIElement, data) {
         li.addEventListener("keydown", (ev: KeyboardEvent) => {
             const trgt = ev.target as HTMLLIElement
             /// ENTER KEY press
             if (ev.keyCode === 13) {
                 this.removePopup()
-                this.itemSelect(data[parseInt(trgt.id, 10)])
+                this.itemSelectCallback(data[parseInt(trgt.id, 10)])
             }
 
             /// DOWN ARROW press
@@ -284,7 +311,7 @@ export class AutoComplete {
                     (li.nextSibling as HTMLLIElement).focus()
                 } else {
                     /// shift focus to the top of the list if we are at the bottom
-                    (this._LIST.childNodes[0] as HTMLLIElement).focus()
+                    (this.LIST.childNodes[0] as HTMLLIElement).focus()
                 }
             }
 
@@ -295,7 +322,7 @@ export class AutoComplete {
                 if (li.previousSibling && li.previousSibling.nodeName === "LI") {
                     (li.previousSibling as HTMLLIElement).focus()
                 } else { /// move focus to the rootElement (input)
-                    this.rootElement.focus()
+                    this.element.focus()
                 }
             }
         })
@@ -309,8 +336,8 @@ export class AutoComplete {
                 let item = data[parseInt(autocompleteItemId, 10)]
                 this.deleteItems();
                 this.removePopup()
-                if (this.itemSelect) {
-                    this.itemSelect(item)
+                if (this.itemSelectCallback) {
+                    this.itemSelectCallback(item)
                 }
             }
         })
@@ -320,9 +347,9 @@ export class AutoComplete {
      * Remove the list items from the list.
      */
     private deleteItems(): void {
-        if (this._LIST.getElementsByTagName("li").length > 0) {
-            while (this._LIST.firstChild) {
-                this._LIST.removeChild(this._LIST.firstChild)
+        if (this.LIST.getElementsByTagName("li").length > 0) {
+            while (this.LIST.firstChild) {
+                this.LIST.removeChild(this.LIST.firstChild)
             }
             this.items = []
         }
@@ -332,8 +359,8 @@ export class AutoComplete {
      * function to remove the popup from DOM.
      */
     private removePopup(): void {
-        if (this._POPUP && this._POPUP.parentNode) {
-            this._POPUP.parentNode.removeChild(this._POPUP)
+        if (this.POPUP && this.POPUP.parentNode) {
+            this.POPUP.parentNode.removeChild(this.POPUP)
         }
         document.removeEventListener("click", this.destroy);
         window.removeEventListener("resize", this.destroy)
@@ -349,7 +376,6 @@ export class AutoComplete {
             localStorage.setItem(`CAC-${url}`, JSON.stringify(data))
         }
     }
-
 
     /**
      * XMLHttpRequest
@@ -383,13 +409,13 @@ export class AutoComplete {
 }
 
 export interface CACompleteOptions {
-    rootElement: HTMLInputElement;
+    element: HTMLInputElement;
     queryUrl: string;
     itemTemplate: string;
     templateKeys: string[];
     cache?: boolean;
-    minStringLength?: number;
+    minLength?: number;
     listClass?: string;
     itemClass?: string;
-    itemSelect?: Function;
+    itemSelectCallback?: Function;
 }

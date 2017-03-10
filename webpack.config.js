@@ -1,15 +1,17 @@
-var webpack = require("webpack");
-var path = require("path");
+const webpack = require("webpack");
+const path = require("path");
 const UglifyJSPlugin = require("uglifyjs-webpack-plugin");
+const minimize = process.argv.indexOf("--minimize");
+console.log("minimize: " + minimize);
 
-var config = {
+const config = {
   entry: __dirname + "/src/cacheautocomplete.ts",
   devtool: "source-map",
   output: {
     path: __dirname + "/dist",
     filename: "cacheautocomplete.js",
     library: "cacheautocomplete",
-    libraryTarget: "umd",
+    libraryTarget: "umd"
     // umdNamedDefine: true
   },
 
@@ -25,15 +27,17 @@ var config = {
       }
     ]
   },
+
   plugins: [
-    // new webpack.HotModuleReplacementPlugin(),
-    // new webpack.optimize.UglifyJsPlugin({
-    //   compress: {
-    //     warnings: false,
-    //     drop_console: true
-    //   }
-    // })
+    new webpack.optimize.UglifyJsPlugin({
+      compress: {
+        warnings: false,
+        drop_console: true
+      }
+    }),
+    // new webpack.HotModuleReplacementPlugin()
   ],
+
   devServer: {
     contentBase: path.join(__dirname, "demo"),
     compress: true,
