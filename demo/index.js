@@ -3,31 +3,30 @@
 var inputOne;
 document.addEventListener("readystatechange", () => {
   if (document.readyState === "complete") {
-    var rootInput = document.getElementById("autoThis");
     inputOne = new cacheautocomplete.AutoComplete({
-      element: rootInput,
-      queryUrl: `https://api.demo.com/api/customer/typeahead?name={{ value }}&apikey=1`,
+      element: document.getElementById("autoThis"),
+      url: `//api.demo.com/api/customer/typeahead?name={{ value }}&apikey=1`,
       itemTemplate: `<p>{{ CST_Name }} - {{ CST_Code }}</p>`,
-      templateKeys: ["CST_Name", "CST_Code"],
-      itemSelectCallback: function(selectedItem) {
-        /// returns the selected item object from the items array
-        console.log(selectedItem);
-        rootInput.value = selectedItem.CST_Name;
+      keys: ["CST_Name", "CST_Code"],
+      onSelect: function(item, autoComplete) {
+        /// returns the selected item object from the items array and the instance of the AutoComplete
+        /// useful to set the inputs value if that is your desired outcome
+        autoComplete.element.value = item.CST_Name;
       }
     });
 
-    var rootInput2 = document.getElementById("autoTwo");
     var y = new cacheautocomplete.AutoComplete({
-      element: rootInput2,
-      queryUrl: `https://api.demo.com/api/shipper/typeahead?name={{ value }}&apikey=1`,
+      element: document.getElementById("autoTwo"),
+      url: `//api.demo.com/api/shipper/typeahead?name={{ value }}&apikey=1`,
       itemTemplate: `<p>{{ CST_Name }} - {{ CST_Code }}</p>`,
-      templateKeys: ["CST_Name", "CST_Code"],
+      keys: ["CST_Name", "CST_Code"],
       itemClass: "customItemClass",
       listClass: "customListClass",
-      itemSelectCallback: function(selectedItem) {
-        /// returns the selected item object from the items array
-        console.log(selectedItem);
-        rootInput2.value = selectedItem.CST_Name;
+      onSelect: function(item, autoComplete) {
+        /// returns the selected item object from the items array and the instance of the AutoComplete
+        /// useful to set the inputs value if that is your desired outcome
+        console.log(autoComplete);
+        autoComplete.element.value = item.CST_Name;
       }
     });
   }

@@ -2,16 +2,16 @@ export declare class AutoComplete {
     items: any[];
     itemClass: string;
     listClass: string;
-    queryUrl: string;
+    url: string;
     element: HTMLInputElement;
     cache: boolean;
     itemTemplate: string;
-    templateKeys: any[];
-    itemSelectCallback: any;
+    keys: string[];
+    onSelect: Function;
     minLength: number;
-    private POPUP;
-    private LIST;
-    private LI_CLASS;
+    readonly POPUP: HTMLDivElement;
+    readonly LIST: HTMLUListElement;
+    readonly LI_CLASS: string;
     constructor(opts: CACompleteOptions);
     /**
       * Delete a single key (url) from storage or all CacheAutoComplete keys.
@@ -20,7 +20,7 @@ export declare class AutoComplete {
       */
     static clearCache(url?: string): void;
     private createComponent();
-    private elementEventListeners();
+    private addEventListeners();
     /**
      * Query a url using the AutoComplete instance
      * @param {string} url - the url to query.
@@ -33,7 +33,7 @@ export declare class AutoComplete {
      * @param {string} itemTemplate - the innerHTML template for the list items
      */
     private setItems(data, itemTemplate, noMatchesFound?);
-    private createListItems(data, itemTemplate, noMatchesFound);
+    private addListItems(data, itemTemplate, noMatchesFound);
     /**
      * Style the list item using the options.itemClass - or default to component defaults
      * @param li
@@ -80,12 +80,12 @@ export declare class AutoComplete {
 }
 export interface CACompleteOptions {
     element: HTMLInputElement;
-    queryUrl: string;
+    url: string;
     itemTemplate: string;
-    templateKeys: string[];
+    keys: string[];
     cache?: boolean;
     minLength?: number;
     listClass?: string;
     itemClass?: string;
-    itemSelectCallback?: Function;
+    onSelect?: Function;
 }

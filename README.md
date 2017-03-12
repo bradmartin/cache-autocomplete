@@ -3,7 +3,7 @@
 # Cache-AutoComplete
 #### Probably not what you're looking for, but it works for me :stuck_out_tongue: :poop:
 
-### File size = *7.21kb* - gzipped = *2.48kb*
+### File size = *7.09kb* - gzipped = *2.44kb*
 
 ![CacheAutoComplete](screens/cacheAutoComplete.gif)
 
@@ -22,13 +22,12 @@ Just want to keep this light weight :smile:
 `cacheautocomplete` is exposed as a library thanks to Webpack so using a `<script>` tag on your html will work. You can also import/require what you need using the module if you're using a module loader for your app.
 ### JS
 ```js
-var rootInput = document.getElementById("myAutoComplete");
 var CAC = new cacheautocomplete.AutoComplete({
-            element: rootInput, // required - the dom element to tie into
-            queryUrl: 'https://api.test.com/api/customer/typeahead?name={{ value }}&apikey=84', // required and must use the `{{ value }}` to inject the rootElement's current value when typing
+            element: document.getElementById("myAutoComplete"), // required - the dom element to tie into
+            url: 'https://api.test.com/api/customer/typeahead?name={{ value }}&apikey=84', // required and must use the `{{ value }}` to inject the rootElement's current value when typing
             itemTemplate: '<div> <h3>{{ Name }}</h3> <img src="{{ ProfilePic }} /> </div>', // required
-            templateKeys: ['Name', 'ProfilePic']
-            itemSelectCallback: function (selectedItem) { // optional - callback when an item is selected via keyboard or mouse event
+            keys: ['Name', 'ProfilePic']
+            onSelect: function (selectedItem, autoComplete) { // optional - callback when an item is selected via keyboard or mouse event
                 console.log(selectedItem);
                 rootInput.value = selectedItem.SomeProp;
             }
@@ -50,10 +49,10 @@ If no url is specified all CacheAutoComplete items are removed from storage.
 ```ts
 interface CACompleteOptions {
     element: HTMLInputElement; /// The HTML Input element to use as the anchor.
-    queryUrl: string; /// The URL to ping for remote data.
+    url: string; /// The URL to ping for remote data.
     itemTemplate: any; /// The response data Key property to display
-    templateKeys: string[]; // The keys are used to create the correct template for the items. See example for correct usage.
-    itemSelectCallback: Function; /// callback function when a list item is selected via keyboard or mouse - this is optional but you likely need to use it and set the rootInput value to some prop in your list objects
+    keys: string[]; // The keys are used to create the correct template for the items. See example for correct usage.
+    onSelect: Function; /// callback function when a list item is selected via keyboard or mouse - this is optional but you likely need to use it and set the rootInput value to some prop in your list objects
     minLength?: number; /// optional - default is 1
     cache?: boolean; /// optional - default is true
     listClass?: string; /// css class to style the list

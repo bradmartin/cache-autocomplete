@@ -2,22 +2,22 @@ export class AutoComplete {
     public items: any[];
     public itemClass: string;
     public listClass: string;
-    public queryUrl: string;
+    public url: string;
     public element: HTMLInputElement
     public cache: boolean;
     public itemTemplate: string;
-    public templateKeys: any[];
-    public itemSelectCallback: any;
+    public keys: string[];
+    public onSelect: Function;
     public minLength: number;
-    private POPUP: HTMLDivElement;
-    private LIST: HTMLUListElement;
-    private LI_CLASS: string = "CacheAutoCompleteItem";
+    readonly POPUP: HTMLDivElement;
+    readonly LIST: HTMLUListElement;
+    readonly LI_CLASS: string = "CacheAutoCompleteItem";
 
     constructor(opts: CACompleteOptions) {
         this.element = opts.element;
-        this.queryUrl = opts.queryUrl;
+        this.url = opts.url;
         this.itemTemplate = opts.itemTemplate;
-        this.templateKeys = opts.templateKeys;
+        this.keys = opts.keys;
         this.items = [];
         this.cache = opts.cache ? opts.cache : true
         this.minLength = opts.minLength ? opts.minLength : 1;
@@ -25,7 +25,7 @@ export class AutoComplete {
         this.listClass = opts.listClass;
         this.POPUP = document.createElement("div") as HTMLDivElement;
         this.LIST = document.createElement("ul") as HTMLUListElement;
-        this.itemSelectCallback = opts.itemSelectCallback;
+        this.onSelect = opts.onSelect;
         this.createComponent();
     }
 
@@ -39,7 +39,7 @@ export class AutoComplete {
             localStorage.removeItem(`CAC-${url}`)
         } else {
             for (let i = localStorage.length; i--;) {
-                let key = localStorage.key(i)
+                const key = localStorage.key(i)
                 if (key.lastIndexOf("CAC", 0) === 0) {
                     localStorage.removeItem(key)
                 }
@@ -48,10 +48,10 @@ export class AutoComplete {
     }
 
     private createComponent() {
-        this.elementEventListeners();
+        this.addEventListeners();
     }
 
-    private elementEventListeners() {
+    private addEventListeners() {
         // this.LIST = document.createElement("ul") as HTMLUListElement
         this.element.addEventListener("keydown", (ev) => {
             /// if TAB press send focus to list - this is handled natively by browsers with most layouts
@@ -74,7 +74,7 @@ export class AutoComplete {
             }
 
             if (trgt.value.trim().length >= this.minLength) {
-                const url = this.queryUrl.replace(`{{ value }}`, encodeURIComponent(this.element.value))
+                const url = this.url.replace(`{{ value }}`, encodeURIComponent(this.element.value))
                 this.get(url, false).then((data) => {
                     this.deleteItems()
                     if (data) {
@@ -105,7 +105,7 @@ export class AutoComplete {
         return new Promise((resolve, reject) => {
             let isUrlCached = false as boolean;
             for (let i = localStorage.length; i--;) {
-                let key = localStorage.key(i) as string;
+                const key = localStorage.key(i) as string;
                 if (key.lastIndexOf("CAC", 0) === 0) {
                     if (key.indexOf(url) > -1 === true) {
                         isUrlCached = true
@@ -127,7 +127,7 @@ export class AutoComplete {
                     reject(err)
                 })
             } else if (isUrlCached && !bustCache) {
-                let cachedData: string = localStorage.getItem(`CAC-${url}`);
+                const cachedData: string = localStorage.getItem(`CAC-${url}`);
                 resolve(JSON.parse(cachedData))
             } else if (!isUrlCached) {
                 this.http(url).then((result) => {
@@ -151,7 +151,7 @@ export class AutoComplete {
      * @param {string} itemTemplate - the innerHTML template for the list items
      */
     private setItems(data: any[], itemTemplate, noMatchesFound: boolean = false): void {
-        this.createListItems(data, itemTemplate, noMatchesFound)
+        this.addListItems(data, itemTemplate, noMatchesFound)
         this.stylePopup()
         this.POPUP.appendChild(this.LIST)
         document.body.appendChild(this.POPUP)
@@ -159,12 +159,12 @@ export class AutoComplete {
     }
 
 
-    private createListItems(data, itemTemplate, noMatchesFound) {
+    private addListItems(data, itemTemplate, noMatchesFound) {
         /// parse the itemTemplate
-        let template = itemTemplate;
+        const template = itemTemplate;
         let i = 0
         for (i; i < data.length; i++) {
-            let li = document.createElement("li") as HTMLLIElement
+            const li = document.createElement("li") as HTMLLIElement
             li.id = i.toString()
             li.tabIndex = 0
             li.setAttribute("cacheautocomplete-id", i.toString())
@@ -172,11 +172,11 @@ export class AutoComplete {
             let originalTemplate = template
             let replacedKeyString
             let j = 0
-            for (j; j < this.templateKeys.length; j++) {
-                let key = this.templateKeys[j]
+            for (j; j < this.keys.length; j++) {
+                const key = this.keys[j]
                 originalTemplate = originalTemplate.replace(`{{ ${key} }}`, `${data[i][key]}`)
                 replacedKeyString = originalTemplate
-                if (j === this.templateKeys.length - 1) {
+                if (j === this.keys.length - 1) {
                     li.innerHTML = replacedKeyString
                     li.title = li.innerText
                     break
@@ -257,11 +257,10 @@ export class AutoComplete {
 
         /// get coords of the doc.body for positioning in the document.body
         /// use this approach for the many use cases of an input (modals and shit layouts)
-        const bodyRect: ClientRect = document.body.getBoundingClientRect()
+        // const bodyRect: ClientRect = document.body.getBoundingClientRect()
         const rect: ClientRect = this.element.getBoundingClientRect()
-        const top: number = rect.top - bodyRect.top + this.element.clientHeight
+        const top: number = rect.bottom;
         const left: number = rect.left
-
 
         /// set popup list styles
         if (this.listClass) {
@@ -298,7 +297,7 @@ export class AutoComplete {
             /// ENTER KEY press
             if (ev.keyCode === 13) {
                 this.removePopup()
-                this.itemSelectCallback(data[parseInt(trgt.id, 10)])
+                this.onSelect(data[parseInt(trgt.id, 10)], this)
             }
 
             /// DOWN ARROW press
@@ -329,11 +328,11 @@ export class AutoComplete {
             const autocompleteItemId = li.getAttribute("cacheautocomplete-id")
             if (ev.target && autocompleteItemId) {
                 // get id of the clicked <li> and map to the data array
-                let item = data[parseInt(autocompleteItemId, 10)]
+                const item = data[parseInt(autocompleteItemId, 10)]
                 this.deleteItems();
                 this.removePopup()
-                if (this.itemSelectCallback) {
-                    this.itemSelectCallback(item)
+                if (this.onSelect) {
+                    this.onSelect(item, this)
                 }
             }
         })
@@ -406,12 +405,12 @@ export class AutoComplete {
 
 export interface CACompleteOptions {
     element: HTMLInputElement;
-    queryUrl: string;
+    url: string;
     itemTemplate: string;
-    templateKeys: string[];
+    keys: string[];
     cache?: boolean;
     minLength?: number;
     listClass?: string;
     itemClass?: string;
-    itemSelectCallback?: Function;
+    onSelect?: Function;
 }

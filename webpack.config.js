@@ -27,7 +27,7 @@ const config = {
 
   plugins: [
     new webpack.optimize.UglifyJsPlugin(),
-    // new webpack.HotModuleReplacementPlugin()
+    new webpack.HotModuleReplacementPlugin()
   ],
   devServer: {
     contentBase: path.join(__dirname, "demo"),
