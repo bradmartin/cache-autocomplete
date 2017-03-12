@@ -257,9 +257,9 @@ export class AutoComplete {
 
         /// get coords of the doc.body for positioning in the document.body
         /// use this approach for the many use cases of an input (modals and shit layouts)
-        // const bodyRect: ClientRect = document.body.getBoundingClientRect()
+        const bodyRect: ClientRect = document.body.getBoundingClientRect()
         const rect: ClientRect = this.element.getBoundingClientRect()
-        const top: number = rect.bottom;
+        const top: number = rect.top - bodyRect.top + this.element.clientHeight
         const left: number = rect.left
 
         /// set popup list styles
