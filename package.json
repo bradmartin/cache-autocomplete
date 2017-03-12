@@ -1,6 +1,6 @@
 {
   "name": "cache-autocomplete",
-  "version": "5.0.0",
+  "version": "5.0.1",
   "description": "JS component for autocomplete with caching.",
   "main": "dist/cacheautocomplete",
   "typings": "cacheautocomplete.d.ts",
