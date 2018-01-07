@@ -1,5 +1,9 @@
 [![npm](https://img.shields.io/npm/v/cache-autocomplete.svg)](https://www.npmjs.com/package/cache-autocomplete)
 [![npm](https://img.shields.io/npm/dt/cache-autocomplete.svg?label=npm%20downloads)](https://www.npmjs.com/package/cache-autocomplete)
+[![GitHub stars](https://img.shields.io/github/stars/bradmartin/cache-autocomplete.svg)](https://github.com/bradmartin/cache-autocomplete/stargazers)
+[![PayPal Donate](https://img.shields.io/badge/Donate-PayPal-ff4081.svg)](https://www.paypal.me/bradwayne88)
+
+
 # Cache-AutoComplete
 #### Probably not what you're looking for, but it works for me :stuck_out_tongue: :poop:
 
